@@ -12,7 +12,7 @@
   --color-ledger-purple: #A855F7;
   --color-ledger-yellow: #EAB308;
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: "Outfit", "Inter", system-ui, sans-serif;
   --font-display: "Outfit", "Inter", sans-serif;
 
   --animate-fade-in: fadeIn 0.5s ease-out forwards;
