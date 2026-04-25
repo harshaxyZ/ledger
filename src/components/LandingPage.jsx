@@ -141,12 +141,17 @@ const LandingPage = () => {
   }, []);
 
   const handleTry = () => {
+    localStorage.removeItem('ledger_transactions');
+    navigate('/app?trial=true');
+  };
+
+  const handleInstall = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
-    } else {
-      localStorage.removeItem('ledger_transactions');
-      navigate('/app?trial=true');
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
     }
   };
 
@@ -161,10 +166,19 @@ const LandingPage = () => {
           </div>
           <h2 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-[0.9] uppercase">Finance, <br /><span className="text-[#22C55E]">Redefined.</span></h2>
           <p className="text-zinc-300 text-lg max-w-lg mx-auto mb-10 font-medium">A privacy-first expense tracker built for the next generation.</p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-6">
             <button onClick={handleTry} className="px-8 py-4 bg-[#22C55E] text-black font-black rounded-2xl flex items-center gap-2 shadow-2xl active:scale-95 transition-transform">Try <span className="underline decoration-2">Ledger</span> <S.Arrow /></button>
             <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"><span className="text-[#22C55E]"><S.Play /></span> Live Demo</button>
           </div>
+          <AnimatePresence>
+            {deferredPrompt && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex justify-center">
+                <button onClick={handleInstall} className="flex items-center gap-3 px-6 py-3 bg-[#151B23] border border-[#22C55E]/30 rounded-full text-sm font-bold text-[#22C55E] hover:bg-[#22C55E]/10 transition-colors">
+                  <S.Zap /> Install Ledger for faster access
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
         <div className="absolute bottom-10 opacity-20 animate-bounce"><S.Down /></div>
       </section>

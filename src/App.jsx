@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CATEGORIES } from './constants/categories';
 import { getCategoryIcon } from './constants/categoryIcons';
@@ -255,8 +256,59 @@ const Tracker = () => {
   );
 };
 
+const PWABadges = () => {
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(r) { console.log('SW Registered:', r); },
+    onRegisterError(e) { console.log('SW Registration error:', e); },
+  });
+  
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return (
+    <>
+      <AnimatePresence>
+        {isOffline && (
+          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }} className="fixed top-0 left-0 right-0 z-[999] bg-red-500 text-white text-center py-1.5 text-xs font-bold shadow-lg flex items-center justify-center gap-2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.61 2.61a2 2 0 0 1 2.78 0l8 8a2 2 0 0 1 0 2.78l-8 8a2 2 0 0 1-2.78 0l-8-8a2 2 0 0 1 0-2.78l8-8Z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> You are offline
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {needRefresh && (
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="fixed bottom-24 left-5 right-5 z-[300] bg-[#151B23] border border-[#22C55E]/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-8.21l-3.34 1.64"/></svg></div>
+              <div><p className="text-sm font-bold text-white">Update available</p><p className="text-[10px] text-zinc-400">New version available — Refresh</p></div>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setNeedRefresh(false)} className="px-3 py-1.5 text-xs font-bold text-zinc-400">Ignore</button>
+              <button onClick={() => updateServiceWorker(true)} className="px-3 py-1.5 bg-[#22C55E] text-black text-xs font-bold rounded-lg">Refresh</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
 const App = () => (
   <Router>
+    <PWABadges />
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/app" element={<Tracker />} />
