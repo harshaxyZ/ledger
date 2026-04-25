@@ -3,7 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const S = {
-  Logo: () => <svg width="24" height="24" viewBox="0 0 512 512" fill="none"><path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="currentColor" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/><line x1="280" y1="160" x2="420" y2="160" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="230" x2="380" y2="230" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="300" x2="340" y2="300" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/></svg>,
+  Logo: ({s=24}={}) => <svg width={s} height={s} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="512" height="512" rx="128" fill="#0A2F1F" fillOpacity="0.5"/>
+    <path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="#22C55E" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M160 120C160 120 160 220 230 290" stroke="#22C55E" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"/>
+    <line x1="280" y1="160" x2="420" y2="160" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
+    <line x1="280" y1="230" x2="380" y2="230" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
+    <line x1="280" y1="300" x2="340" y2="300" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
+  </svg>,
   Arrow: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
   Phone: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
   Shield: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
@@ -205,7 +212,7 @@ const LandingPage = () => {
       {/* 5: Solution */}
       <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
-          <div className="hidden md:block"><div className="w-full h-[600px] bg-[#151B23] border border-white/5 rounded-[4rem] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.1)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={450} /></div></div></div>
+          <div className="hidden md:block"><div className="w-full h-[600px] bg-[#151B23] border border-white/5 rounded-[4rem] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.1)]"><div className="animate-pulse"><S.Logo s={400} /></div></div></div>
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
