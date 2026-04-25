@@ -24,7 +24,7 @@ const S = {
 const Tile = ({ icon: Icon, title, desc }) => (
   <div className="flex gap-4">
     <div className="p-3 bg-red-500/10 rounded-2xl h-fit text-red-500"><Icon /></div>
-    <div><h4 className="text-lg font-bold mb-1 text-white">{title}</h4><p className="text-sm text-zinc-300 font-medium">{desc}</p></div>
+    <div><h4 className="text-lg font-bold mb-1 text-white">{title}</h4><p className="text-sm text-zinc-300 font-medium leading-relaxed" dangerouslySetInnerHTML={{ __html: desc }} /></div>
   </div>
 );
 const Row = ({ title, ledger, other }) => (
@@ -188,9 +188,9 @@ const LandingPage = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-4 block">03 / The Problem</span>
           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight uppercase">The <span className="text-red-500">Fatal</span> Flaws.</h2>
           <div className="space-y-6 max-w-xl">
-            <Tile icon={S.Shield} title="Your Data is Safe" desc="Most apps <span className='text-[#22C55E]'>sell your data</span> to strangers. We keep everything on your phone." />
-            <Tile icon={S.Zap} title="Works Everywhere" desc="If the <span className='text-[#22C55E]'>internet</span> stops, Ledger still works. Your money history is always with you." />
-            <Tile icon={S.Activity} title="Fast and Simple" desc="Logging an expense takes <span className='text-[#22C55E]'>2 seconds</span>. No more waiting for slow bank apps." />
+            <Tile icon={S.Shield} title="You Own Everything" desc="Ledger lives on your phone. No banks, no servers, no strangers. <span class='text-[#22C55E]'>You are in control.</span>" />
+            <Tile icon={S.Zap} title="No Internet? No Problem." desc="Record your expenses anywhere. Even in remote areas. <span class='text-[#22C55E]'>Always works.</span>" />
+            <Tile icon={S.Activity} title="Lightning Fast" desc="Stop waiting for slow apps. Log your spend in <span class='text-[#22C55E]'>2 seconds</span> and get on with your day." />
           </div>
         </div>
       </section>
@@ -205,11 +205,11 @@ const LandingPage = () => {
       {/* 5: Solution */}
       <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
-          <div className="hidden md:block"><div className="w-full h-[500px] bg-[#151B23] border border-white/5 rounded-[3rem] flex items-center justify-center scale-110 shadow-[0_0_80px_rgba(34,197,94,0.15)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={360} /></div></div></div>
+          <div className="hidden md:block"><div className="w-full h-[600px] bg-[#151B23] border border-white/5 rounded-[4rem] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.1)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={450} /></div></div></div>
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
-            <p className="text-xl text-zinc-300 font-medium mb-8">Military-grade <span className="text-[#22C55E]">local-only</span> storage with zero-latency logging.</p>
+            <p className="text-xl text-zinc-300 font-medium mb-8">A powerful tool that puts your <span className="text-[#22C55E]">entire finance</span> in your pocket.</p>
             <ul className="space-y-4">
               {['100% Offline Processing', 'AES-256 Local Encryption', 'Zero Data Harvesting'].map(t => (
                 <li key={t} className="flex items-center gap-3 font-bold text-sm text-zinc-400"><div className="w-5 h-5 bg-[#22C55E]/20 rounded-full flex items-center justify-center text-[#22C55E]"><S.Check /></div><span className="group-hover:text-white transition-colors">{t}</span></li>
