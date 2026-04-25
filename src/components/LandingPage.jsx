@@ -156,8 +156,7 @@ const LandingPage = () => {
       <section className="h-screen w-full snap-start flex flex-col items-center justify-center relative px-6">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#22c55e15,transparent_50%)]" />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="z-10 text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-2 bg-[#22C55E]/20 rounded-xl border border-[#22C55E]/20 text-[#22C55E]"><S.Logo /></div>
+          <div className="flex items-center justify-center mb-6">
             <h1 className="text-4xl font-black tracking-tighter uppercase">Ledger</h1>
           </div>
           <h2 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-[0.9] uppercase">Finance, <br /><span className="text-[#22C55E]">Redefined.</span></h2>
