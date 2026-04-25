@@ -46,7 +46,17 @@ const Tracker = () => {
   const [note, setNote] = useState('');
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [searchParams] = useSearchParams();
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   const { spentToday, transactionsToday, monthlySpent, dailyAverage } = getStats();
+
+  useEffect(() => {
+    const h = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', h);
+    return () => window.removeEventListener('beforeinstallprompt', h);
+  }, []);
 
   useEffect(() => {
     if (searchParams.get('trial') === 'true') {
@@ -69,6 +79,16 @@ const Tracker = () => {
   const handleReset = () => { if (window.confirm("Clear all logs?")) { clearAllData(); setIsSettingsOpen(false); } };
   const trendData = [400, 600, 450, 700, 650, 800, 750, 900, 850, 1000];
 
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    }
+  };
+
   // Render active tab content
   const renderContent = () => {
     if (activeTab === 'history') return <History transactions={transactions} deleteTransaction={deleteTransaction} />;
@@ -76,6 +96,15 @@ const Tracker = () => {
     // Home tab
     return (
       <main className="flex-1 px-5 space-y-4 overflow-y-auto no-scrollbar pb-4">
+        {deferredPrompt && (
+          <button onClick={handleInstallApp} className="w-full bg-gradient-to-r from-[#22C55E]/10 to-transparent border border-[#22C55E]/20 rounded-2xl p-4 flex items-center justify-between text-left active:scale-95 transition-transform mb-2">
+            <div>
+              <h4 className="font-bold text-[#22C55E] text-sm mb-1">Install Ledger</h4>
+              <p className="text-[10px] text-zinc-400">Add to home screen for faster access</p>
+            </div>
+            <div className="px-3 py-1.5 bg-[#22C55E] text-black text-[10px] font-black rounded-lg uppercase tracking-wider">Install</div>
+          </button>
+        )}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent today</p>
