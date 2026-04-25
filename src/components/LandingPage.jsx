@@ -55,9 +55,9 @@ const MockHome = () => (
     <div className="bg-[#151B23] rounded-lg p-2 mb-2"><p className="text-[6px] text-zinc-500 uppercase">Add Expense</p><p className="text-[14px] font-black text-zinc-700">₹ 0</p></div>
     <div className="bg-[#151B23] rounded-lg p-2">
       <p className="text-[6px] text-zinc-500 uppercase mb-1">Recent</p>
-      {[{n:'Swiggy Order',a:'₹450',c:'#22C55E'},{n:'Uber Ride',a:'₹180',c:'#3B82F6'},{n:'Netflix',a:'₹649',c:'#EAB308'}].map((x,i)=>(
+      {[{n:'Zomato',a:'₹450',c:'#22C55E'},{n:'Uber',a:'₹180',c:'#3B82F6'},{n:'Amazon',a:'₹649',c:'#F97316'}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center py-1 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{backgroundColor:x.c}}/><span className="text-zinc-300">{x.n}</span></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><span className="text-zinc-300">{x.n}</span></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
@@ -91,16 +91,16 @@ const MockHistory = () => (
     <div className="bg-[#151B23] rounded-lg overflow-hidden mb-2">
       {[{n:'Zomato',a:'₹320',c:'#22C55E',t:'Food'},{n:'Petrol',a:'₹1,200',c:'#3B82F6',t:'Transport'},{n:'Amazon',a:'₹2,499',c:'#F97316',t:'Shopping'}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{backgroundColor:x.c}}/><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
     </div>
     <p className="text-[6px] text-zinc-500 uppercase font-bold mb-1">23 Apr 2026</p>
     <div className="bg-[#151B23] rounded-lg overflow-hidden">
-      {[{n:'Electricity Bill',a:'₹1,800',c:'#A855F7',t:'Bills'},{n:'Gym',a:'₹500',c:'#F87171',t:'Health'}].map((x,i)=>(
+      {[{n:'Rent',a:'₹18,000',c:'#F472B6',t:'Home'},{n:'Netflix',a:'₹649',c:'#A855F7',t:'Bills'}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full" style={{backgroundColor:x.c}}/><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
@@ -158,8 +158,8 @@ const LandingPage = () => {
           <h2 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-[0.9] uppercase">Finance, <br /><span className="text-[#22C55E]">Redefined.</span></h2>
           <p className="text-zinc-300 text-lg max-w-lg mx-auto mb-10 font-medium">A privacy-first expense tracker built for the next generation.</p>
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-            <button onClick={handleTry} className="px-8 py-4 bg-[#22C55E] text-black font-black rounded-2xl flex items-center gap-2 shadow-2xl active:scale-95 transition-transform">Try Ledger <S.Arrow /></button>
-            <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"><span className="text-[#22C55E]"><S.Play /></span> Watch Demo</button>
+            <button onClick={handleTry} className="px-8 py-4 bg-[#22C55E] text-black font-black rounded-2xl flex items-center gap-2 shadow-2xl active:scale-95 transition-transform">Try <span className="underline decoration-2">Ledger</span> <S.Arrow /></button>
+            <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"><span className="text-[#22C55E]"><S.Play /></span> Live Demo</button>
           </div>
         </motion.div>
         <div className="absolute bottom-10 opacity-20 animate-bounce"><S.Down /></div>
@@ -171,9 +171,9 @@ const LandingPage = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">02 / The Landscape</span>
           <h2 className="text-5xl md:text-7xl font-black mb-12 leading-tight uppercase">Meet the <br /><span className="text-zinc-700">Old Guard.</span></h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {['Mint', 'YNAB', 'Expensify'].map(n => (<div key={n} className="p-8 bg-[#151B23] border border-white/5 rounded-3xl"><h3 className="text-2xl font-black text-zinc-400">{n}</h3><p className="text-xs font-bold text-zinc-500 mt-2">Cloud-Based Legacy System</p></div>))}
+            {['Mint', 'YNAB', 'Expensify'].map(n => (<div key={n} className="p-8 bg-[#151B23] border border-white/5 rounded-3xl"><h3 className="text-2xl font-black text-zinc-400">{n}</h3><p className="text-xs font-bold text-zinc-500 mt-2">Cloud-Based <span className="text-[#22C55E]">Legacy</span> System</p></div>))}
           </div>
-          <p className="mt-12 text-zinc-300 font-medium text-lg max-w-xl">Their architecture belongs in 2015, not 2026.</p>
+          <p className="mt-12 text-zinc-300 font-medium text-lg max-w-xl leading-relaxed">Most apps sell your <span className="text-[#22C55E]">financial data</span> to advertisers. In 2026, privacy isn't a feature—it's a <span className="text-[#22C55E]">human right</span>.</p>
         </div>
       </section>
 
@@ -183,9 +183,9 @@ const LandingPage = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-4 block">03 / The Problem</span>
           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight uppercase">The <span className="text-red-500">Fatal</span> Flaws.</h2>
           <div className="space-y-6 max-w-xl">
-            <Tile icon={S.Shield} title="Data Privacy" desc="Cloud apps sell your spending habits to credit card companies." />
-            <Tile icon={S.Zap} title="SMS Lag" desc="20% of digital transactions go unlogged due to unreliable alerts." />
-            <Tile icon={S.Activity} title="Centralization" desc="Server goes down, you lose access to your financial history." />
+            <Tile icon={S.Shield} title="Data Harvesting" desc="Traditional apps use your spending to build a <span className='text-[#22C55E]'>shadow profile</span> for advertisers." />
+            <Tile icon={S.Zap} title="Cloud Dependency" desc="If their server goes down or your <span className='text-[#22C55E]'>internet</span> fails, you lose your financial records." />
+            <Tile icon={S.Activity} title="Inaccurate Logging" desc="SMS trackers fail <span className='text-[#22C55E]'>20%</span> of the time. Manual entry is often slow and clunky." />
           </div>
         </div>
       </section>
@@ -200,14 +200,14 @@ const LandingPage = () => {
       {/* 5: Solution */}
       <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
-          <div className="hidden md:block"><div className="w-full h-96 bg-[#151B23] border border-white/5 rounded-[2rem] flex items-center justify-center"><span className="text-[#22C55E] opacity-20"><S.Phone /></span></div></div>
+          <div className="hidden md:block"><div className="w-full h-96 bg-[#151B23] border border-white/5 rounded-[2rem] flex items-center justify-center scale-110 shadow-[0_0_50px_rgba(34,197,94,0.1)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={120} /></div></div></div>
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
-            <p className="text-xl text-zinc-300 font-medium mb-8">Military-grade local storage with 2-second logging.</p>
+            <p className="text-xl text-zinc-300 font-medium mb-8">Military-grade <span className="text-[#22C55E]">local-only</span> storage with zero-latency logging.</p>
             <ul className="space-y-4">
-              {['100% Offline Processing', 'AES-256 Local Encryption', '0ms Sync Latency'].map(t => (
-                <li key={t} className="flex items-center gap-3 font-bold text-sm text-zinc-400"><div className="w-5 h-5 bg-[#22C55E]/20 rounded-full flex items-center justify-center text-[#22C55E]"><S.Check /></div>{t}</li>
+              {['100% Offline Processing', 'AES-256 Local Encryption', 'Zero Data Harvesting'].map(t => (
+                <li key={t} className="flex items-center gap-3 font-bold text-sm text-zinc-400"><div className="w-5 h-5 bg-[#22C55E]/20 rounded-full flex items-center justify-center text-[#22C55E]"><S.Check /></div><span className="group-hover:text-white transition-colors">{t}</span></li>
               ))}
             </ul>
           </div>
@@ -223,10 +223,10 @@ const LandingPage = () => {
             <table className="w-full text-left border-collapse">
               <thead><tr className="bg-white/5"><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">Feature</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-[#22C55E]">Ledger</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Others</th></tr></thead>
               <tbody className="divide-y divide-white/5">
-                <Row title="Storage" ledger="On-Device" other="Cloud" />
-                <Row title="Privacy" ledger="100% Private" other="Data Harvesting" />
-                <Row title="Offline" ledger="Works Anywhere" other="Needs Internet" />
-                <Row title="Cost" ledger="Free Forever" other="Subscription" />
+                <Row title="Data Ownership" ledger="100% User Owned" other="Corporate Servers" />
+                <Row title="Security" ledger="AES-256 Encryption" other="Public Cloud" />
+                <Row title="Internet" ledger="Offline-First" other="Needs Connectivity" />
+                <Row title="Privacy" ledger="Zero Harvesting" other="Data For Sale" />
               </tbody>
             </table>
           </div>
@@ -253,9 +253,9 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,#22c55e15,transparent_50%)]" />
         <div className="text-center z-10">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-12 block">08 / Try It</span>
-          <h2 className="text-6xl md:text-9xl font-black mb-12 uppercase">Try Ledger<br />Now.</h2>
-          <p className="text-zinc-300 mb-16 max-w-lg mx-auto text-lg font-medium italic">100% Free. 100% Private. Zero setup.</p>
-          <button onClick={handleTry} className="px-12 py-6 bg-white text-black font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E] transition-all active:scale-95 shadow-2xl mx-auto"><S.Phone /> Try Ledger</button>
+          <h2 className="text-6xl md:text-9xl font-black mb-12 uppercase leading-none">Your <span className="text-[#22C55E]">Money</span>,<br />Your Data.</h2>
+          <p className="text-zinc-300 mb-16 max-w-lg mx-auto text-lg font-medium italic">Join the <span className="text-[#22C55E]">privacy revolution</span>. 100% Free. No setup required.</p>
+          <button onClick={handleTry} className="px-12 py-6 bg-white text-black font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E] transition-all active:scale-95 shadow-2xl mx-auto"><S.Phone /> Launch App</button>
         </div>
       </section>
 

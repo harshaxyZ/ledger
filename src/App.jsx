@@ -53,7 +53,16 @@ const Tracker = () => {
     }
   }, []);
 
-  const handleSave = () => { if (!amount || amount === '0') return; addTransaction(amount, selectedCategory.id, note); setAmount('0'); setNote(''); };
+  const handleSave = () => { 
+    if (!amount || amount === '0') return; 
+    if (selectedCategory.id === 'other' && !note.trim()) {
+      alert("Please specify what this expense was for in the note field.");
+      return;
+    }
+    addTransaction(amount, selectedCategory.id, note); 
+    setAmount('0'); 
+    setNote(''); 
+  };
   const handleOnboarding = () => { if (tempName.trim()) { setUserName(tempName.trim()); setShowOnboarding(false); if ("Notification" in window) Notification.requestPermission(); } };
   const simulateNotif = () => { setShowToast(true); setTimeout(() => setShowToast(false), 5000); };
   const handleReset = () => { if (window.confirm("Clear all logs?")) { clearAllData(); setIsSettingsOpen(false); } };
@@ -119,7 +128,12 @@ const Tracker = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="p-2 bg-white/5 rounded-lg text-zinc-500"><I.Note /></div>
-            <input value={note} onChange={e => setNote(e.target.value)} placeholder="Add note (optional)" className="bg-transparent text-[11px] text-zinc-400 outline-none w-full" />
+            <input 
+              value={note} 
+              onChange={e => setNote(e.target.value)} 
+              placeholder={selectedCategory.id === 'other' ? "What was this for? (Required)" : "Add note (optional)"} 
+              className={`bg-transparent text-[11px] outline-none w-full transition-colors ${selectedCategory.id === 'other' && !note ? 'text-[#22C55E] placeholder-[#22C55E]/50' : 'text-zinc-400'}`} 
+            />
             {amount && amount !== '0' && <button onClick={handleSave} className="p-2 bg-[#22C55E] rounded-xl active:scale-95 transition-all text-black"><I.Plus /></button>}
           </div>
         </div>
