@@ -13,6 +13,11 @@ const S = {
   Minus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="5" y1="12" x2="19" y2="12"/></svg>,
   Play: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
   X: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+  Food: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>,
+  Transport: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>,
+  Shopping: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
+  Home: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  Bills: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>,
   Down: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
 };
 
@@ -55,9 +60,9 @@ const MockHome = () => (
     <div className="bg-[#151B23] rounded-lg p-2 mb-2"><p className="text-[6px] text-zinc-500 uppercase">Add Expense</p><p className="text-[14px] font-black text-zinc-700">₹ 0</p></div>
     <div className="bg-[#151B23] rounded-lg p-2">
       <p className="text-[6px] text-zinc-500 uppercase mb-1">Recent</p>
-      {[{n:'Zomato',a:'₹450',c:'#22C55E'},{n:'Uber',a:'₹180',c:'#3B82F6'},{n:'Amazon',a:'₹649',c:'#F97316'}].map((x,i)=>(
+      {[{n:'Zomato',a:'₹450',c:'#22C55E', i:S.Food},{n:'Uber',a:'₹180',c:'#3B82F6', i:S.Transport},{n:'Amazon',a:'₹649',c:'#F97316', i:S.Shopping}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center py-1 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><span className="text-zinc-300">{x.n}</span></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><span className="text-zinc-300">{x.n}</span></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
@@ -89,18 +94,18 @@ const MockHistory = () => (
     <p className="font-black text-[10px] mb-2">History</p>
     <p className="text-[6px] text-zinc-500 uppercase font-bold mb-1">24 Apr 2026</p>
     <div className="bg-[#151B23] rounded-lg overflow-hidden mb-2">
-      {[{n:'Zomato',a:'₹320',c:'#22C55E',t:'Food'},{n:'Petrol',a:'₹1,200',c:'#3B82F6',t:'Transport'},{n:'Amazon',a:'₹2,499',c:'#F97316',t:'Shopping'}].map((x,i)=>(
+      {[{n:'Zomato',a:'₹320',c:'#22C55E',t:'Food', i:S.Food},{n:'Petrol',a:'₹1,200',c:'#3B82F6',t:'Transport', i:S.Transport},{n:'Amazon',a:'₹2,499',c:'#F97316',t:'Shopping', i:S.Shopping}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
     </div>
     <p className="text-[6px] text-zinc-500 uppercase font-bold mb-1">23 Apr 2026</p>
     <div className="bg-[#151B23] rounded-lg overflow-hidden">
-      {[{n:'Rent',a:'₹18,000',c:'#F472B6',t:'Home'},{n:'Netflix',a:'₹649',c:'#A855F7',t:'Bills'}].map((x,i)=>(
+      {[{n:'Rent',a:'₹18,000',c:'#F472B6',t:'Home', i:S.Home},{n:'Netflix',a:'₹649',c:'#A855F7',t:'Bills', i:S.Bills}].map((x,i)=>(
         <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
-          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><S.Check /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
           <span className="font-bold text-zinc-300">{x.a}</span>
         </div>
       ))}
@@ -183,9 +188,9 @@ const LandingPage = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-4 block">03 / The Problem</span>
           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight uppercase">The <span className="text-red-500">Fatal</span> Flaws.</h2>
           <div className="space-y-6 max-w-xl">
-            <Tile icon={S.Shield} title="Data Harvesting" desc="Traditional apps use your spending to build a <span className='text-[#22C55E]'>shadow profile</span> for advertisers." />
-            <Tile icon={S.Zap} title="Cloud Dependency" desc="If their server goes down or your <span className='text-[#22C55E]'>internet</span> fails, you lose your financial records." />
-            <Tile icon={S.Activity} title="Inaccurate Logging" desc="SMS trackers fail <span className='text-[#22C55E]'>20%</span> of the time. Manual entry is often slow and clunky." />
+            <Tile icon={S.Shield} title="Your Data is Safe" desc="Most apps <span className='text-[#22C55E]'>sell your data</span> to strangers. We keep everything on your phone." />
+            <Tile icon={S.Zap} title="Works Everywhere" desc="If the <span className='text-[#22C55E]'>internet</span> stops, Ledger still works. Your money history is always with you." />
+            <Tile icon={S.Activity} title="Fast and Simple" desc="Logging an expense takes <span className='text-[#22C55E]'>2 seconds</span>. No more waiting for slow bank apps." />
           </div>
         </div>
       </section>
@@ -200,7 +205,7 @@ const LandingPage = () => {
       {/* 5: Solution */}
       <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
-          <div className="hidden md:block"><div className="w-full h-96 bg-[#151B23] border border-white/5 rounded-[2rem] flex items-center justify-center scale-110 shadow-[0_0_50px_rgba(34,197,94,0.1)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={120} /></div></div></div>
+          <div className="hidden md:block"><div className="w-full h-[500px] bg-[#151B23] border border-white/5 rounded-[3rem] flex items-center justify-center scale-110 shadow-[0_0_80px_rgba(34,197,94,0.15)]"><div className="text-[#22C55E] animate-pulse"><S.Logo s={360} /></div></div></div>
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
