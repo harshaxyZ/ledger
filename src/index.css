@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0A0E14;
+  --color-surface: #151B23;
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  
+  --color-ledger-green: #22C55E;
+  --color-ledger-orange: #F97316;
+  --color-ledger-blue: #3B82F6;
+  --color-ledger-purple: #A855F7;
+  --color-ledger-yellow: #EAB308;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Outfit", "Inter", sans-serif;
+
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-slide-up: slideUp 0.5s ease-out forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-white antialiased font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .ledger-card {
+    @apply bg-surface border border-white/5 rounded-2xl p-4;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+html, body, #root {
+  height: 100%;
+  overflow-y: auto;
+  background-color: #0A0E14;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
