@@ -3,14 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const S = {
-  Logo: ({s=24}={}) => <svg width={s} height={s} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="512" height="512" rx="128" fill="#0A2F1F" fillOpacity="0.5"/>
-    <path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="#22C55E" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M160 120C160 120 160 220 230 290" stroke="#22C55E" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round" opacity="0.6"/>
-    <line x1="280" y1="160" x2="420" y2="160" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
-    <line x1="280" y1="230" x2="380" y2="230" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
-    <line x1="280" y1="300" x2="340" y2="300" stroke="#22C55E" strokeWidth="30" strokeLinecap="round"/>
-  </svg>,
+  Logo: ({s=24}={}) => <img src="/logo.png" alt="Ledger" style={{ width: s, height: s, borderRadius: s*0.25 }} />,
   Arrow: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
   Phone: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
   Shield: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,

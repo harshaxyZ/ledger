@@ -13,7 +13,7 @@ import LandingPage from './components/LandingPage';
 
 // SVG Icons
 const I = {
-  Logo: ({s=20}={}) => <svg width={s} height={s} viewBox="0 0 512 512" fill="none"><path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="currentColor" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/><line x1="280" y1="160" x2="420" y2="160" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="230" x2="380" y2="230" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="300" x2="340" y2="300" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/></svg>,
+  Logo: ({s=20}={}) => <img src="/logo.png" alt="Ledger" style={{ width: s, height: s, borderRadius: s*0.25 }} />,
   Down: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>,
   Up: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>,
   Right: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
