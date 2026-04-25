@@ -204,7 +204,7 @@ const LandingPage = () => {
       {/* 5: Solution */}
       <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
-          <div className="hidden md:block"><div className="w-full h-[600px] bg-[#151B23] border border-white/5 rounded-[4rem] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.1)]"><img src="/logo.png" alt="Ledger Logo" className="w-[85%] h-[85%] object-contain rounded-[2.5rem]" /></div></div>
+          <div className="hidden md:block"><div className="w-full h-[600px] bg-[#151B23] border border-white/5 rounded-[4rem] flex items-center justify-center shadow-[0_0_100px_rgba(34,197,94,0.1)]"><img src="/logo.png" alt="Ledger Logo" className="w-[80%] h-[80%] object-contain" /></div></div>
           <div>
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>

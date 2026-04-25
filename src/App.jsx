@@ -232,7 +232,7 @@ const Tracker = () => {
       {/* Header */}
       <header className="px-6 pt-10 pb-6 shrink-0">
         <div className="flex justify-between items-start mb-1">
-          <div className="flex items-center gap-2"><h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1><div className="p-1 bg-[#22C55E]/20 rounded-md text-[#22C55E]"><I.Logo /></div></div>
+          <div className="flex items-center gap-2"><h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1></div>
           <div className="flex gap-2">
             <button onClick={simulateNotif} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Bell /></button>
             <button onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Gear /></button>
