@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const S = {
-  Book: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  Logo: () => <svg width="24" height="24" viewBox="0 0 512 512" fill="none"><path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="currentColor" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/><line x1="280" y1="160" x2="420" y2="160" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="230" x2="380" y2="230" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="300" x2="340" y2="300" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/></svg>,
   Arrow: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
   Phone: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
   Shield: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
@@ -140,7 +140,7 @@ const LandingPage = () => {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
     } else {
-      localStorage.removeItem('kuber_transactions');
+      localStorage.removeItem('ledger_transactions');
       navigate('/app?trial=true');
     }
   };
@@ -152,7 +152,7 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#22c55e15,transparent_50%)]" />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="z-10 text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-2 bg-[#22C55E]/20 rounded-xl border border-[#22C55E]/20 text-[#22C55E]"><S.Book /></div>
+            <div className="p-2 bg-[#22C55E]/20 rounded-xl border border-[#22C55E]/20 text-[#22C55E]"><S.Logo /></div>
             <h1 className="text-4xl font-black tracking-tighter uppercase">Ledger</h1>
           </div>
           <h2 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-[0.9] uppercase">Finance, <br /><span className="text-[#22C55E]">Redefined.</span></h2>
@@ -262,7 +262,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 px-6 bg-[#0A0E14] snap-start">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2"><span className="text-[#22C55E]"><S.Book /></span><span className="font-bold uppercase tracking-tighter">Ledger</span></div>
+          <div className="flex items-center gap-2"><span className="text-[#22C55E]"><S.Logo /></span><span className="font-bold uppercase tracking-tighter">Ledger</span></div>
           <p className="text-zinc-500 text-xs italic">Private. Secure. Yours.</p>
         </div>
       </footer>

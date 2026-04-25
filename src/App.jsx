@@ -13,7 +13,7 @@ import LandingPage from './components/LandingPage';
 
 // SVG Icons
 const I = {
-  Book: ({s=20}={}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  Logo: ({s=20}={}) => <svg width={s} height={s} viewBox="0 0 512 512" fill="none"><path d="M160 120V330C160 357.614 182.386 380 210 380H360" stroke="currentColor" strokeWidth="50" strokeLinecap="round" strokeLinejoin="round"/><line x1="280" y1="160" x2="420" y2="160" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="230" x2="380" y2="230" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/><line x1="280" y1="300" x2="340" y2="300" stroke="currentColor" strokeWidth="30" strokeLinecap="round"/></svg>,
   Down: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>,
   Up: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>,
   Right: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
@@ -186,7 +186,7 @@ const Tracker = () => {
       <AnimatePresence>
         {showOnboarding && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] bg-[#0A0E14] flex flex-col items-center justify-center p-8 text-center">
-            <div className="mb-8 p-4 bg-[#22C55E]/10 rounded-3xl text-[#22C55E]"><I.Book s={64} /></div>
+            <div className="mb-8 p-4 bg-[#22C55E]/10 rounded-3xl text-[#22C55E]"><I.Logo s={64} /></div>
             <h2 className="text-3xl font-extrabold mb-2">Welcome to Ledger</h2>
             <p className="text-zinc-500 text-sm mb-12">Private by design.</p>
             <div className="w-full max-w-xs space-y-4">
@@ -218,7 +218,7 @@ const Tracker = () => {
       {/* Header */}
       <header className="px-6 pt-10 pb-6 shrink-0">
         <div className="flex justify-between items-start mb-1">
-          <div className="flex items-center gap-2"><h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1><div className="p-1 bg-[#22C55E]/20 rounded-md text-[#22C55E]"><I.Book /></div></div>
+          <div className="flex items-center gap-2"><h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1><div className="p-1 bg-[#22C55E]/20 rounded-md text-[#22C55E]"><I.Logo /></div></div>
           <div className="flex gap-2">
             <button onClick={simulateNotif} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Bell /></button>
             <button onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Gear /></button>
