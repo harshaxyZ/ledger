@@ -15,8 +15,8 @@ export default defineConfig({
         short_name: 'Ledger',
         start_url: '/',
         display: 'standalone',
-        background_color: '#121212',
-        theme_color: '#121212',
+        background_color: '#0A0E14',
+        theme_color: '#0A0E14',
         description: 'Privacy-first offline expense tracker',
         icons: [
           {

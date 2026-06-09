@@ -163,15 +163,7 @@ Recent: ${recent}`;
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-white/5 border border-white/5 p-4 rounded-2xl">
-                    <motion.div 
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ repeat: Infinity, duration: 1.5 }}
-                      className="flex gap-1"
-                    >
-                      <div className="w-1.5 h-1.5 bg-[#22C55E] rounded-full" />
-                      <div className="w-1.5 h-1.5 bg-[#22C55E] rounded-full" />
-                      <div className="w-1.5 h-1.5 bg-[#22C55E] rounded-full" />
-                    </motion.div>
+                    <div className="text-xs font-bold text-zinc-500 animate-pulse">Coach is thinking...</div>
                   </div>
                 </div>
               )}

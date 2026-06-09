@@ -1,38 +1,41 @@
 import React from 'react';
 import { CATEGORIES } from '../constants/categories';
 import { getCategoryIcon } from '../constants/categoryIcons';
+import { motion } from 'framer-motion';
 
 const Insights = ({ transactions }) => {
-  const total = transactions.reduce((s, t) => s + t.amount, 0);
+  const total = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const expenseTransactions = transactions.filter(t => t.type === 'expense');
+  const avgPerTx = expenseTransactions.length ? Math.round(total / expenseTransactions.length) : 0;
+
   const byCategory = CATEGORIES.map(cat => ({
     ...cat,
-    total: transactions.filter(t => t.categoryId === cat.id).reduce((s, t) => s + t.amount, 0)
+    total: transactions.filter(t => t.type === 'expense' && t.categoryId === cat.id).reduce((s, t) => s + t.amount, 0)
   })).filter(c => c.total > 0).sort((a, b) => b.total - a.total);
 
   const topCategory = byCategory[0];
-  const avgPerTx = transactions.length ? Math.round(total / transactions.length) : 0;
 
   return (
-    <div className="px-5 py-4 space-y-4 overflow-y-auto no-scrollbar pb-28">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-5 py-4 space-y-4 overflow-y-auto no-scrollbar pb-28">
       <h2 className="text-2xl font-extrabold">Insights</h2>
-
+      
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Total Spent</p>
           <h3 className="text-xl font-bold text-[#22C55E]">₹{total.toLocaleString()}</h3>
-        </div>
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Transactions</p>
-          <h3 className="text-xl font-bold">{transactions.length}</h3>
-        </div>
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+          <h3 className="text-xl font-bold">{expenseTransactions.length}</h3>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Avg / Transaction</p>
           <h3 className="text-xl font-bold">₹{avgPerTx.toLocaleString()}</h3>
-        </div>
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
           <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Top Category</p>
           <h3 className="text-xl font-bold">{topCategory?.name || '—'}</h3>
-        </div>
+        </motion.div>
       </div>
 
       <div className="bg-[#151B23] border border-white/5 rounded-2xl p-4">
@@ -50,15 +53,25 @@ const Insights = ({ transactions }) => {
                   <span className="text-[11px] font-bold">₹{cat.total.toLocaleString()} ({pct}%)</span>
                 </div>
                 <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: cat.color }} />
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    className="h-full rounded-full transition-all" 
+                    style={{ backgroundColor: cat.color }} 
+                  />
                 </div>
               </div>
             );
           })}
-          {byCategory.length === 0 && <p className="text-zinc-500 text-sm italic text-center py-8">No data yet.</p>}
+          {byCategory.length === 0 && (
+            <div className="p-4 border border-white/5 rounded-2xl text-center">
+              <p className="text-xs text-zinc-500">No spending data yet</p>
+              <p className="text-[10px] text-zinc-600 mt-1">Add expenses to see your breakdown</p>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

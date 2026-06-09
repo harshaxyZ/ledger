@@ -1,0 +1,2280 @@
+LEDGER PHASE 2 - FULL CODE DUMP
+=================================
+
+
+--- src/App.css ---
+
+.counter {
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+  margin-bottom: 24px;
+
+  &:hover {
+    border-color: var(--accent-border);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.hero {
+  position: relative;
+
+  .base,
+  .framework,
+  .vite {
+    inset-inline: 0;
+    margin: 0 auto;
+  }
+
+  .base {
+    width: 170px;
+    position: relative;
+    z-index: 0;
+  }
+
+  .framework,
+  .vite {
+    position: absolute;
+  }
+
+  .framework {
+    z-index: 1;
+    top: 34px;
+    height: 28px;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
+      scale(1.4);
+  }
+
+  .vite {
+    z-index: 0;
+    top: 107px;
+    height: 26px;
+    width: auto;
+    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
+      scale(0.8);
+  }
+}
+
+#center {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  place-content: center;
+  place-items: center;
+  flex-grow: 1;
+
+  @media (max-width: 1024px) {
+    padding: 32px 20px 24px;
+    gap: 18px;
+  }
+}
+
+#next-steps {
+  display: flex;
+  border-top: 1px solid var(--border);
+  text-align: left;
+
+  & > div {
+    flex: 1 1 0;
+    padding: 32px;
+    @media (max-width: 1024px) {
+      padding: 24px 20px;
+    }
+  }
+
+  .icon {
+    margin-bottom: 16px;
+    width: 22px;
+    height: 22px;
+  }
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+#docs {
+  border-right: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+#next-steps ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  margin: 32px 0 0;
+
+  .logo {
+    height: 18px;
+  }
+
+  a {
+    color: var(--text-h);
+    font-size: 16px;
+    border-radius: 6px;
+    background: var(--social-bg);
+    display: flex;
+    padding: 6px 12px;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: var(--shadow);
+    }
+    .button-icon {
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    li {
+      flex: 1 1 calc(50% - 8px);
+    }
+
+    a {
+      width: 100%;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
+}
+
+#spacer {
+  height: 88px;
+  border-top: 1px solid var(--border);
+  @media (max-width: 1024px) {
+    height: 48px;
+  }
+}
+
+.ticks {
+  position: relative;
+  width: 100%;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4.5px;
+    border: 5px solid transparent;
+  }
+
+  &::before {
+    left: 0;
+    border-left-color: var(--border);
+  }
+  &::after {
+    right: 0;
+    border-right-color: var(--border);
+  }
+}
+
+
+--- src/App.jsx ---
+
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
+import { useRegisterSW } from 'virtual:pwa-register/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CATEGORIES } from './constants/categories';
+import { getCategoryIcon } from './constants/categoryIcons';
+import { useTransactions } from './hooks/useTransactions';
+import { useBudgets } from './hooks/useBudgets';
+import Analysis from './components/Analysis';
+import AIAdvisor from './components/AIAdvisor';
+import Sparkline from './components/Sparkline';
+import History from './components/History';
+import Insights from './components/Insights';
+import LandingPage from './components/LandingPage';
+
+// SVG Icons
+const I = {
+  Logo: ({s=20}={}) => <img src="/logo.png" alt="Ledger" style={{ width: s, height: s, borderRadius: s*0.25 }} />,
+  Down: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>,
+  Up: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>,
+  Right: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
+  ChevDown: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
+  Plus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  Bell: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>,
+  Gear: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  Home: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  Clock: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  Chat: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  Bar: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+  Trash: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
+  X: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+  Note: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  Out: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+  Share: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+  Download: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+  Flame: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
+  Alert: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+};
+
+const Tracker = () => {
+  const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats, getBudgetStatuses, exportData } = useTransactions();
+  const { setBudget, getBudget } = useBudgets();
+  const [activeTab, setActiveTab] = useState('home');
+  const [showOnboarding, setShowOnboarding] = useState(!userName);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [tempName, setTempName] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [showInstallTip, setShowInstallTip] = useState(false);
+  
+  const [txType, setTxType] = useState('expense');
+  const [amount, setAmount] = useState('0');
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [note, setNote] = useState('');
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  
+  const [searchParams] = useSearchParams();
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  const stats = getStats();
+  const budgetStatuses = getBudgetStatuses();
+
+  useEffect(() => {
+    const h = (e) => { e.preventDefault(); setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', h);
+    return () => window.removeEventListener('beforeinstallprompt', h);
+  }, []);
+
+  useEffect(() => {
+    if (searchParams.get('trial') === 'true') setShowInstallTip(true);
+  }, [searchParams]);
+
+  const handleSave = () => { 
+    if (!amount || amount === '0') return; 
+    if (selectedCategory.id === 'other' && !note.trim()) {
+      alert("Please specify what this was for in the note field.");
+      return;
+    }
+    try {
+      addTransaction(amount, txType, selectedCategory.id, note); 
+      setAmount('0'); 
+      setNote('');
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  const handleOnboarding = () => { if (tempName.trim()) { setUserName(tempName.trim()); setShowOnboarding(false); if ("Notification" in window) Notification.requestPermission(); } };
+  const handleReset = () => { if (window.confirm("Clear all logs?")) { clearAllData(); setIsSettingsOpen(false); } };
+  
+  const getTrendData = () => {
+    const data = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const start = d.getTime();
+      const end = start + 86400000;
+      const spent = transactions
+        .filter(t => t.type === 'expense' && new Date(t.date).getTime() >= start && new Date(t.date).getTime() < end)
+        .reduce((sum, t) => sum + t.amount, 0);
+      data.push(spent);
+    }
+    return data;
+  };
+  const trendData = getTrendData();
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') setDeferredPrompt(null);
+    } else {
+      setShowInstallTip(true);
+    }
+  };
+
+  const warnings = Object.entries(budgetStatuses).filter(([_, status]) => status && status.isWarning);
+
+  return (
+    <div className="flex flex-col min-h-screen max-w-md md:max-w-2xl mx-auto relative bg-[#0A0E14] text-white pb-24 overflow-hidden font-sans">
+      {/* Install Tip Popup */}
+      <AnimatePresence>
+        {showInstallTip && (
+          <div className="fixed inset-0 z-[250] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowInstallTip(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-[#151B23] border border-white/10 rounded-[2rem] p-8 max-w-sm w-full text-center">
+              <button onClick={() => setShowInstallTip(false)} className="absolute top-4 right-4 text-zinc-500"><I.X /></button>
+              <div className="p-4 bg-[#22C55E]/10 rounded-2xl w-fit mx-auto mb-6 text-[#22C55E]"><I.Share /></div>
+              <h3 className="text-xl font-black mb-3 uppercase tracking-tight">Add to Home Screen</h3>
+              <p className="text-zinc-400 text-sm mb-6 leading-relaxed">To install Ledger as an app:</p>
+              <div className="text-left space-y-3 mb-6">
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">1.</span><p className="text-sm text-zinc-300">Tap the <strong>Share</strong> button (or ⋮ menu)</p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">2.</span><p className="text-sm text-zinc-300">Select <strong>"Add to Home Screen"</strong></p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">3.</span><p className="text-sm text-zinc-300">Tap <strong>"Add"</strong> — done!</p></div>
+              </div>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowInstallTip(false)} className="w-full py-3 bg-[#22C55E] text-black font-black rounded-xl transition-transform">Got it!</motion.button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Onboarding */}
+      <AnimatePresence>
+        {showOnboarding && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] bg-[#0A0E14] flex flex-col items-center justify-center p-8 text-center">
+            <div className="mb-8 p-4 bg-[#22C55E]/10 rounded-3xl text-[#22C55E]"><I.Logo s={64} /></div>
+            <h2 className="text-3xl font-extrabold mb-2">Welcome to Ledger</h2>
+            <p className="text-zinc-500 text-sm mb-12">Private by design.</p>
+            <div className="w-full max-w-xs space-y-4">
+              <input autoFocus value={tempName} onChange={e => setTempName(e.target.value)} placeholder="Enter your name" className="w-full bg-[#151B23] border border-white/5 rounded-2xl p-4 text-xl font-bold outline-none focus:border-[#22C55E]/50 text-white" />
+              <motion.button whileTap={{ scale: 0.95 }} onClick={handleOnboarding} disabled={!tempName.trim()} className="w-full py-4 bg-[#22C55E] text-black rounded-2xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 transition-transform">Get Started <I.Right /></motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Settings */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <div className="fixed inset-0 z-[160] flex items-end">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsSettingsOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="relative w-full max-h-[85vh] overflow-y-auto no-scrollbar bg-[#151B23] border-t border-white/5 rounded-t-[32px] p-8 pb-12">
+              <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8" />
+              <div className="flex justify-between items-center mb-8"><h3 className="text-2xl font-bold">Settings</h3><button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button></div>
+              <div className="space-y-4">
+                <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-500">User</p><p className="text-sm font-bold">{userName}</p></div><button onClick={() => { setUserName(''); setShowOnboarding(true); setIsSettingsOpen(false); }} className="text-xs font-bold text-[#22C55E]">Edit</button></div>
+                
+                {/* Budgets UI */}
+                <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl space-y-3">
+                  <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Budgets</h4>
+                  {CATEGORIES.filter(c => c.id !== 'other').map(cat => (
+                    <div key={cat.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg" style={{backgroundColor: `${cat.color}20`, color: cat.color}}>{getCategoryIcon(cat.id)}</div>
+                        <p className="text-xs font-bold">{cat.name}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-bold text-zinc-500">₹</span>
+                        <input 
+                          type="number" 
+                          value={getBudget(cat.id) || ''}
+                          placeholder="No limit"
+                          onChange={(e) => setBudget(cat.id, e.target.value)}
+                          className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-right w-20 outline-none focus:border-[#22C55E] text-white transition-colors"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <motion.button whileTap={{ scale: 0.98 }} onClick={() => { exportData(); setIsSettingsOpen(false); }} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-[#22C55E]/10 rounded-xl text-[#22C55E]"><I.Download /></div><div><p className="text-xs font-bold">Export Data</p><p className="text-[10px] text-zinc-500">Download backup JSON</p></div></motion.button>
+                <motion.button whileTap={{ scale: 0.98 }} onClick={handleReset} className="w-full p-4 bg-[#0A0E14] border border-red-500/20 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-red-500/10 rounded-xl text-red-500"><I.Trash /></div><div><p className="text-xs font-bold text-red-500">Reset All Logs</p><p className="text-[10px] text-zinc-500">Delete all data</p></div></motion.button>
+                <motion.button whileTap={{ scale: 0.98 }} onClick={() => window.location.reload()} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-white/5 rounded-xl text-zinc-400"><I.Out /></div><div><p className="text-xs font-bold">Restart</p><p className="text-[10px] text-zinc-500">Clear cache</p></div></motion.button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <header className="px-6 pt-10 pb-6 shrink-0">
+        <div className="flex justify-between items-start mb-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1>
+          </div>
+          <div className="flex gap-2">
+            {stats.currentStreak > 0 && (
+               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500">
+                 <I.Flame />
+                 <span className="text-[11px] font-bold">{stats.currentStreak} day streak</span>
+               </motion.div>
+            )}
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400 hover:text-white transition-colors"><I.Gear /></motion.button>
+          </div>
+        </div>
+        <p className="text-[12px] text-zinc-500 font-medium">Hello, {userName}. Private by design.</p>
+      </header>
+
+      <AnimatePresence mode="wait">
+        {activeTab === 'history' && <History key="history" transactions={transactions} deleteTransaction={deleteTransaction} />}
+        {activeTab === 'insights' && <Insights key="insights" transactions={transactions} />}
+        {activeTab === 'home' && (
+          <motion.main key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex-1 px-5 space-y-4 overflow-y-auto no-scrollbar pb-4">
+            <AnimatePresence>
+              {deferredPrompt && (
+                <motion.button initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} whileTap={{ scale: 0.98 }} onClick={handleInstallApp} className="w-full bg-gradient-to-r from-[#22C55E]/10 to-transparent border border-[#22C55E]/20 rounded-2xl p-4 flex items-center justify-between text-left mb-2">
+                  <div>
+                    <h4 className="font-bold text-[#22C55E] text-sm mb-1">Install Ledger</h4>
+                    <p className="text-[10px] text-zinc-400">Add to home screen for faster access</p>
+                  </div>
+                  <div className="px-3 py-1.5 bg-[#22C55E] text-black text-[10px] font-black rounded-lg uppercase tracking-wider">Install</div>
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Earned</p>
+                <h2 className="text-xl font-bold text-[#22C55E]">₹{stats.earnedThisMonth.toLocaleString()}</h2>
+                <p className="text-[10px] text-zinc-500 mt-1">This month</p>
+                <div className="mt-3 flex justify-end"><div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><I.Down /></div></div>
+              </div>
+              <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent</p>
+                <h2 className="text-xl font-bold">₹{stats.spentThisMonth.toLocaleString()}</h2>
+                <p className="text-[10px] text-zinc-500 mt-1">This month</p>
+                <div className="mt-3 flex justify-end"><div className="p-2 bg-orange-500/10 rounded-full text-orange-500"><I.Up /></div></div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl flex justify-between items-start">
+              <div>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Net Balance</p>
+                <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-orange-500' : 'text-white'}`}>
+                  {stats.netThisMonth < 0 ? '-' : ''}₹{Math.abs(stats.netThisMonth).toLocaleString()}
+                </h2>
+              </div>
+              <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#F97316" : "#22C55E"} />
+            </div>
+
+            {/* Budget Warnings */}
+            {warnings.length > 0 && (
+              <div className="space-y-2">
+                {warnings.map(([catId, status]) => {
+                  const cat = CATEGORIES.find(c => c.id === catId);
+                  return (
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} key={catId} className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3">
+                      <div className="text-orange-500"><I.Alert /></div>
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-orange-500">Warning: {cat?.name} budget</p>
+                        <p className="text-[10px] text-orange-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add Expense/Income */}
+            <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl space-y-4">
+              <div className="flex bg-white/5 rounded-lg p-1 relative">
+                <motion.div 
+                  className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#22C55E] rounded-md"
+                  animate={{ left: txType === 'expense' ? '4px' : 'calc(50%)' }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+                <button onClick={() => setTxType('expense')} className={`relative z-10 flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'expense' ? 'text-black' : 'text-zinc-500'}`}>Expense</button>
+                <button onClick={() => setTxType('income')} className={`relative z-10 flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'income' ? 'text-black' : 'text-zinc-500'}`}>Income</button>
+              </div>
+              
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Amount</p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-3xl font-bold text-zinc-600">₹</span>
+                    <input type="number" value={amount === '0' ? '' : amount} onChange={e => setAmount(e.target.value)} placeholder="0" className="bg-transparent text-3xl font-bold outline-none w-full text-white placeholder-zinc-800" />
+                  </div>
+                </div>
+                <div className="w-px bg-white/5 my-1" />
+                <div className="flex-1 relative">
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Category</p>
+                  <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} className="flex items-center justify-between w-full p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <div className="flex items-center gap-2">{getCategoryIcon(selectedCategory.id, selectedCategory.color)}<span className="text-[11px] font-bold text-zinc-300 truncate">{selectedCategory.name}</span></div>
+                    <I.ChevDown />
+                  </button>
+                  <AnimatePresence>
+                    {isCategoryOpen && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#151B23] border border-white/10 rounded-2xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar">
+                        {CATEGORIES.map(cat => (
+                          <button key={cat.id} onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} className="flex items-center gap-3 w-full p-3 hover:bg-white/5 text-left border-b border-white/5 last:border-0 transition-colors">
+                            {getCategoryIcon(cat.id, cat.color)}<span className="text-[11px] font-bold text-zinc-300">{cat.name}</span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-white/5 rounded-lg text-zinc-500"><I.Note /></div>
+                <input 
+                  value={note} 
+                  onChange={e => setNote(e.target.value)} 
+                  placeholder={selectedCategory.id === 'other' ? "What was this for? (Required)" : "Add note (optional)"} 
+                  className={`bg-transparent text-[11px] outline-none w-full transition-colors ${selectedCategory.id === 'other' && !note ? 'text-[#22C55E] placeholder-[#22C55E]/50' : 'text-zinc-400'}`} 
+                />
+                {amount && amount !== '0' && <motion.button whileTap={{ scale: 0.9 }} onClick={handleSave} className="p-2 bg-[#22C55E] rounded-xl text-black"><I.Plus /></motion.button>}
+              </div>
+            </div>
+            
+            <Analysis transactions={transactions} />
+            
+            {/* Recent Logs */}
+            <div className="bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden mb-8">
+              <div className="p-4 flex justify-between items-center border-b border-white/5">
+                <h3 className="text-[11px] font-bold text-zinc-300 uppercase tracking-widest">Recent logs</h3>
+                <button onClick={() => setActiveTab('history')} className="text-[10px] font-bold text-zinc-500 hover:text-white transition-colors">View all</button>
+              </div>
+              <div className="divide-y divide-white/5">
+                {transactions.length === 0 ? <div className="p-8 text-center text-zinc-500 text-[11px] italic">No logs yet.</div> : transactions.slice(0, 5).map(t => {
+                  const cat = CATEGORIES.find(c => c.id === t.categoryId) || CATEGORIES[CATEGORIES.length - 1];
+                  return (
+                    <motion.div whileHover={{ backgroundColor: 'rgba(255,255,255,0.02)' }} key={t.id} className="p-4 flex items-center justify-between transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2.5 rounded-full" style={{ backgroundColor: `${cat.color}22` }}>{getCategoryIcon(cat.id, cat.color)}</div>
+                        <div><p className="text-xs font-bold">{t.note || cat.name}</p><p className="text-[9px] text-zinc-500">{cat.name}</p></div>
+                      </div>
+                      <span className={`text-xs font-bold ${t.type === 'income' ? 'text-[#22C55E]' : ''}`}>
+                        {t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString()}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.main>
+        )}
+      </AnimatePresence>
+
+      <AIAdvisor isOpen={activeTab === 'coach'} onClose={() => setActiveTab('home')} transactions={transactions} userName={userName} stats={stats} budgetStatuses={budgetStatuses} />
+
+      {/* Nav */}
+      <nav className="fixed bottom-0 left-0 right-0 max-w-md md:max-w-2xl mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-2">
+        {[['home','Home',<I.Home />],['history','History',<I.Clock />],['coach','Coach',<I.Chat />],['insights','Insights',<I.Bar />]].map(([id,label,icon]) => (
+          <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center gap-1.5 px-4 transition-all ${activeTab === id ? 'text-[#22C55E]' : 'text-zinc-600 hover:text-zinc-400'}`}>{icon}<span className="text-[10px] font-bold">{label}</span></button>
+        ))}
+      </nav>
+    </div>
+  );
+};
+
+const PWABadges = () => {
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(r) { console.log('SW Registered:', r); },
+    onRegisterError(e) { console.log('SW Registration error:', e); },
+  });
+  
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return (
+    <>
+      <AnimatePresence>
+        {isOffline && (
+          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }} className="fixed top-0 left-0 right-0 z-[999] bg-red-500 text-white text-center py-1.5 text-xs font-bold shadow-lg flex items-center justify-center gap-2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.61 2.61a2 2 0 0 1 2.78 0l8 8a2 2 0 0 1 0 2.78l-8 8a2 2 0 0 1-2.78 0l-8-8a2 2 0 0 1 0-2.78l8-8Z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> You are offline
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {needRefresh && (
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="fixed bottom-24 left-5 right-5 z-[300] bg-[#151B23] border border-[#22C55E]/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-8.21l-3.34 1.64"/></svg></div>
+              <div><p className="text-sm font-bold text-white">Update available</p><p className="text-[10px] text-zinc-400">New version available — Refresh</p></div>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => setNeedRefresh(false)} className="px-3 py-1.5 text-xs font-bold text-zinc-400">Ignore</button>
+              <button onClick={() => updateServiceWorker(true)} className="px-3 py-1.5 bg-[#22C55E] text-black text-xs font-bold rounded-lg">Refresh</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+const App = () => (
+  <Router>
+    <PWABadges />
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/app" element={<Tracker />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  </Router>
+);
+
+export default App;
+
+
+--- src/components/AIAdvisor.jsx ---
+
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CATEGORIES } from '../constants/categories';
+import { GROQ_API_KEY } from '../constants/config';
+
+// Safe SVG icons
+const XIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const SendIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
+const UserIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>;
+
+const AIAdvisor = ({ isOpen, onClose, transactions, userName, stats, budgetStatuses }) => {
+  const [query, setQuery] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      setMessages([
+        { role: 'assistant', content: `Hi ${userName || 'there'}! I'm your Ledger Coach. I have access to your spending data. Ask me anything about your finances or how to save money!` }
+      ]);
+    }
+  }, [isOpen, userName]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
+
+  const getSpendingContext = () => {
+    if (!stats || transactions.length === 0) return "No transactions logged yet.";
+
+    const recent = transactions.slice(0, 3).map(t => `${t.note || 'No note'} (₹${t.amount})`).join(', ');
+    
+    const alerts = budgetStatuses ? Object.entries(budgetStatuses)
+      .filter(([_, status]) => status && status.isWarning)
+      .map(([catId, status]) => {
+        const cat = CATEGORIES.find(c => c.id === catId);
+        return `${cat?.name || catId} at ${Math.round(status.percentUsed)}%`;
+      }).join(', ') : '';
+
+    const topExp = stats.topExpenseCategory ? `${stats.topExpenseCategory.name} ₹${stats.topExpenseCategory.amount}` : 'None';
+
+    return `User: ${userName}
+This Month: Income ₹${stats.earnedThisMonth}, Spent ₹${stats.spentThisMonth}, Net ₹${stats.netThisMonth}
+Top Expense: ${topExp}
+Daily Average: ₹${Math.round(stats.dailyAverageSpend)}
+Budget Alerts: ${alerts || 'None'}
+Recent: ${recent}`;
+  };
+
+  const handleSend = async () => {
+    if (!query.trim() || isLoading) return;
+
+    const userMessage = { role: 'user', content: query };
+    setMessages(prev => [...prev, userMessage]);
+    setQuery('');
+    
+    if (transactions.length === 0) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "You haven't logged any transactions yet. Add some income or expenses so I can give you advice!" }]);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const context = getSpendingContext();
+      const systemPrompt = `
+        You are "Ledger Coach", a premium financial advisor for a user named ${userName}.
+        
+        YOUR MISSION: Help the user understand their spending and save money.
+        RELEVANCY RULE: 
+        - Questions about spending, budget, "recap my day", "summary", savings, or financial habits are HIGHLY RELEVANT. Answer them directly with alpha-level advice.
+        - Only decline questions that are completely unrelated to life or finance.
+        
+        CURRENT USER DATA:
+        ${context}
+        
+        Style: Professional, concise, and data-driven. Always use Indian Rupees (₹).
+      `;
+
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages.map(m => ({ role: m.role, content: m.content })),
+            { role: "user", content: query }
+          ],
+          temperature: 0.7,
+          max_tokens: 500
+        })
+      });
+
+      const data = await response.json();
+      const advice = data.choices[0]?.message?.content || "I'm having trouble connecting. Please try again!";
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: advice }]);
+    } catch (error) {
+      // Offline fallback
+      const topExpName = stats?.topExpenseCategory?.name || 'various things';
+      const fallbackMsg = `I seem to be offline. However, I can see you spent ₹${stats?.spentThisMonth || 0} this month. Your biggest expense is ${topExpName}.`;
+      setMessages(prev => [...prev, { role: 'assistant', content: fallbackMsg }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-[#0A0E14]/80 backdrop-blur-xl"
+          />
+          
+          <motion.div 
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="relative bg-[#151B23] border-t border-white/5 h-[90vh] flex flex-col p-6 overflow-hidden max-w-md mx-auto w-full rounded-t-[32px]"
+          >
+            <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8 shrink-0" />
+            
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-[#22C55E]/10 rounded-xl text-[#22C55E]">
+                  <UserIcon />
+                </div>
+                <div>
+                  <h2 className="text-xl font-extrabold">Ledger Coach</h2>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Powered by Groq AI</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-zinc-500">
+                <XIcon />
+              </button>
+            </div>
+
+            <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 no-scrollbar pb-6 px-1">
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] leading-relaxed shadow-lg ${
+                    m.role === 'user' 
+                      ? 'bg-[#22C55E] text-black font-black' 
+                      : 'bg-white/5 border border-white/5 text-zinc-300 font-medium'
+                  }`}>
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                    <div className="text-xs font-bold text-zinc-500 animate-pulse">Coach is thinking...</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-auto pb-8 pt-4">
+               <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+                {["Recap my month", "How to save ₹2000?", "Where am I overspending?"].map((s, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => { setQuery(s); }}
+                    className="whitespace-nowrap px-4 py-2 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-zinc-500 hover:text-white transition-colors"
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+              <div className="relative">
+                <input 
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Ask about your finances..."
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-sm font-medium focus:outline-none focus:border-[#22C55E]/50 transition-colors"
+                />
+                <button 
+                  disabled={isLoading}
+                  onClick={handleSend}
+                  className="absolute right-2 top-2 p-2 bg-[#22C55E] text-black rounded-xl active:scale-95 transition-all shadow-lg disabled:opacity-50"
+                >
+                  <SendIcon />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default AIAdvisor;
+
+
+--- src/components/Analysis.jsx ---
+
+import React from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { CATEGORIES } from '../constants/categories';
+import { getCategoryIcon } from '../constants/categoryIcons';
+import { motion } from 'framer-motion';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const Analysis = ({ transactions }) => {
+  const dataByCategory = CATEGORIES.map(cat => {
+    const total = transactions
+      .filter(t => t.type === 'expense' && t.categoryId === cat.id)
+      .reduce((sum, t) => sum + t.amount, 0);
+    return { ...cat, total };
+  }).filter(cat => cat.total > 0).sort((a, b) => b.total - a.total);
+
+  const chartData = {
+    labels: dataByCategory.map(c => c.name),
+    datasets: [{
+      data: dataByCategory.map(c => c.total),
+      backgroundColor: dataByCategory.map(c => c.color),
+      borderWidth: 0,
+      hoverOffset: 4
+    }],
+  };
+
+  const chartOptions = {
+    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+    cutout: '75%',
+    responsive: true,
+    maintainAspectRatio: false
+  };
+
+  const totalSpent = dataByCategory.reduce((sum, c) => sum + c.total, 0);
+
+  if (totalSpent === 0) return (
+    <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl mb-4 text-center">
+      <p className="text-xs text-zinc-500">No spending data yet</p>
+      <p className="text-[10px] text-zinc-600 mt-1">Add expenses to see your breakdown</p>
+    </div>
+  );
+
+  return (
+    <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl mb-4">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-sm font-semibold text-zinc-300">Spending overview</h3>
+        <span className="text-[11px] text-zinc-500 font-medium">This month</span>
+      </div>
+
+      <div className="flex items-center gap-6">
+        <div className="relative w-36 h-36 shrink-0">
+          <Doughnut data={chartData} options={chartOptions} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-[13px] font-bold leading-tight">₹{totalSpent.toLocaleString()}</span>
+            <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-medium">Total</span>
+          </div>
+        </div>
+
+        <div className="flex-1 space-y-3">
+          {dataByCategory.slice(0, 5).map(cat => (
+            <div key={cat.id} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-zinc-800/50">
+                  {getCategoryIcon(cat.id, cat.color)}
+                </div>
+                <span className="text-[11px] font-medium text-zinc-400">{cat.name}</span>
+              </div>
+              <span className="text-[11px] font-bold">₹{cat.total.toLocaleString()}</span>
+            </div>
+          ))}
+          {dataByCategory.length > 5 && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-zinc-800/50">
+                  {getCategoryIcon('other', '#64748B')}
+                </div>
+                <span className="text-[11px] font-medium text-zinc-400">Others</span>
+              </div>
+              <span className="text-[11px] font-bold">
+                ₹{dataByCategory.slice(5).reduce((s, c) => s + c.total, 0).toLocaleString()}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default Analysis;
+
+
+--- src/components/ErrorBoundary.jsx ---
+
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Ledger Error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-[#0A0E14] text-white p-6 text-center">
+          <div className="p-4 bg-red-500/10 text-red-500 rounded-2xl mb-6">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Something broke.</h2>
+          <p className="text-zinc-400 mb-8 max-w-sm">
+            Don't worry, your data is safe locally. Please reload the app to continue.
+          </p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-[#22C55E] text-black font-bold rounded-xl active:scale-95 transition-transform"
+          >
+            Reload App
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+
+
+--- src/components/History.jsx ---
+
+import React, { useState } from 'react';
+import { CATEGORIES } from '../constants/categories';
+import { getCategoryIcon } from '../constants/categoryIcons';
+import { searchTransactions, filterByCategory, filterByType, groupByDate } from '../utils/search';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const History = ({ transactions, deleteTransaction }) => {
+  const [query, setQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [catFilter, setCatFilter] = useState('');
+
+  let filtered = searchTransactions(transactions, query);
+  filtered = filterByType(filtered, typeFilter);
+  filtered = filterByCategory(filtered, catFilter);
+
+  const grouped = groupByDate(filtered);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this log?")) {
+      deleteTransaction(id);
+    }
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-5 py-4 space-y-6 overflow-y-auto no-scrollbar pb-28">
+      <h2 className="text-2xl font-extrabold">History</h2>
+      
+      <div className="space-y-4">
+        <div className="relative">
+          <input 
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search transactions..."
+            className="w-full bg-[#151B23] border border-white/5 rounded-2xl py-3 px-4 text-sm font-medium outline-none focus:border-[#22C55E]/50 transition-colors"
+          />
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === '' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>All</motion.button>
+          <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('expense')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === 'expense' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>Expense</motion.button>
+          <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('income')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === 'income' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>Income</motion.button>
+        </div>
+
+        {typeFilter === 'expense' && (
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            <motion.button whileTap={{ scale: 0.95 }} onClick={() => setCatFilter('')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${catFilter === '' ? 'bg-white/20 text-white' : 'bg-white/5 text-zinc-400'}`}>All Categories</motion.button>
+            {CATEGORIES.map(cat => (
+              <motion.button key={cat.id} whileTap={{ scale: 0.95 }} onClick={() => setCatFilter(cat.id)} className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${catFilter === cat.id ? 'bg-white/20 text-white' : 'bg-white/5 text-zinc-400'}`}>
+                {getCategoryIcon(cat.id, cat.color)} {cat.name}
+              </motion.button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <AnimatePresence>
+        {filtered.length === 0 ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-20 text-zinc-500 text-sm italic">No matching transactions.</motion.div>
+        ) : (
+          Object.entries(grouped).map(([date, txns]) => (
+            <motion.div key={date} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3">{date}</p>
+              <div className="bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
+                <AnimatePresence>
+                  {txns.map(t => {
+                    const cat = CATEGORIES.find(c => c.id === t.categoryId) || CATEGORIES[CATEGORIES.length - 1];
+                    return (
+                      <motion.div key={t.id} layout initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="p-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="p-2.5 rounded-full" style={{ backgroundColor: `${cat.color}22` }}>
+                            {getCategoryIcon(cat.id, cat.color)}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold">{t.note || cat.name}</p>
+                            <p className="text-[9px] text-zinc-500">{cat.name} • {t.type === 'income' ? 'Income' : 'Expense'}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-xs font-bold ${t.type === 'income' ? 'text-[#22C55E]' : ''}`}>
+                            {t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString()}
+                          </span>
+                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleDelete(t.id)} className="text-zinc-600 hover:text-red-500 transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          ))
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
+export default History;
+
+
+--- src/components/Insights.jsx ---
+
+import React from 'react';
+import { CATEGORIES } from '../constants/categories';
+import { getCategoryIcon } from '../constants/categoryIcons';
+import { motion } from 'framer-motion';
+
+const Insights = ({ transactions }) => {
+  const total = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const expenseTransactions = transactions.filter(t => t.type === 'expense');
+  const avgPerTx = expenseTransactions.length ? Math.round(total / expenseTransactions.length) : 0;
+
+  const byCategory = CATEGORIES.map(cat => ({
+    ...cat,
+    total: transactions.filter(t => t.type === 'expense' && t.categoryId === cat.id).reduce((s, t) => s + t.amount, 0)
+  })).filter(c => c.total > 0).sort((a, b) => b.total - a.total);
+
+  const topCategory = byCategory[0];
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-5 py-4 space-y-4 overflow-y-auto no-scrollbar pb-28">
+      <h2 className="text-2xl font-extrabold">Insights</h2>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Total Spent</p>
+          <h3 className="text-xl font-bold text-[#22C55E]">₹{total.toLocaleString()}</h3>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Transactions</p>
+          <h3 className="text-xl font-bold">{expenseTransactions.length}</h3>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Avg / Transaction</p>
+          <h3 className="text-xl font-bold">₹{avgPerTx.toLocaleString()}</h3>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Top Category</p>
+          <h3 className="text-xl font-bold">{topCategory?.name || '—'}</h3>
+        </motion.div>
+      </div>
+
+      <div className="bg-[#151B23] border border-white/5 rounded-2xl p-4">
+        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-4">Breakdown</p>
+        <div className="space-y-3">
+          {byCategory.map(cat => {
+            const pct = total ? Math.round((cat.total / total) * 100) : 0;
+            return (
+              <div key={cat.id}>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1 rounded-lg bg-zinc-800/50">{getCategoryIcon(cat.id, cat.color)}</div>
+                    <span className="text-[11px] font-bold text-zinc-300">{cat.name}</span>
+                  </div>
+                  <span className="text-[11px] font-bold">₹{cat.total.toLocaleString()} ({pct}%)</span>
+                </div>
+                <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    className="h-full rounded-full transition-all" 
+                    style={{ backgroundColor: cat.color }} 
+                  />
+                </div>
+              </div>
+            );
+          })}
+          {byCategory.length === 0 && (
+            <div className="p-4 border border-white/5 rounded-2xl text-center">
+              <p className="text-xs text-zinc-500">No spending data yet</p>
+              <p className="text-[10px] text-zinc-600 mt-1">Add expenses to see your breakdown</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default Insights;
+
+
+--- src/components/LandingPage.jsx ---
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
+const S = {
+  Logo: ({s=24}={}) => <img src="/logo.png" alt="Ledger" style={{ width: s, height: s, borderRadius: s*0.25 }} />,
+  Arrow: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
+  Phone: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>,
+  Shield: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  Zap: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  Activity: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+  Check: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
+  Minus: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  Play: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+  X: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+  Food: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>,
+  Transport: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>,
+  Shopping: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
+  Home: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+  Bills: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>,
+  Down: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
+  Share: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+};
+
+const Tile = ({ icon: Icon, title, desc }) => (
+  <div className="flex gap-4">
+    <div className="p-3 bg-red-500/10 rounded-2xl h-fit text-red-500"><Icon /></div>
+    <div><h4 className="text-lg font-bold mb-1 text-white">{title}</h4><p className="text-sm text-zinc-300 font-medium leading-relaxed" dangerouslySetInnerHTML={{ __html: desc }} /></div>
+  </div>
+);
+const Row = ({ title, ledger, other }) => (
+  <tr>
+    <td className="p-4 md:p-6 text-sm font-bold text-zinc-400">{title}</td>
+    <td className="p-4 md:p-6 text-sm font-black text-[#22C55E]"><div className="flex items-center gap-2"><S.Check /> {ledger}</div></td>
+    <td className="p-4 md:p-6 text-sm font-bold text-zinc-600"><div className="flex items-center gap-2"><S.Minus /> {other}</div></td>
+  </tr>
+);
+
+// ─── PHONE MOCKUP COMPONENT ────────────────────────────────
+const PhoneMock = ({ title, desc, children }) => (
+  <div className="flex flex-col items-center gap-4 w-full">
+    <div className="w-[220px] md:w-[240px] bg-[#0A0E14] rounded-[1.5rem] border-2 border-white/10 overflow-hidden shadow-2xl shadow-black/50">
+      <div className="h-6 bg-[#0A0E14] flex items-center justify-center"><div className="w-12 h-1 bg-white/10 rounded-full" /></div>
+      <div className="px-3 pb-3 text-[8px]">{children}</div>
+    </div>
+    <div className="text-center max-w-[240px]">
+      <p className="text-sm font-black text-white uppercase tracking-tight">{title}</p>
+      <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">{desc}</p>
+    </div>
+  </div>
+);
+
+// ─── MOCK SCREENS ───────────────────────────────────────────
+const MockHome = () => (
+  <div>
+    <div className="flex justify-between items-center mb-2"><span className="font-black text-[10px]">Ledger</span><span className="text-zinc-500 text-[7px]">Hi, Harsha</span></div>
+    <div className="grid grid-cols-2 gap-1.5 mb-2">
+      <div className="bg-[#151B23] rounded-lg p-2"><p className="text-[6px] text-zinc-500 uppercase">Spent Today</p><p className="text-[12px] font-black text-[#22C55E]">₹2,450</p><p className="text-[6px] text-zinc-500">5 logs</p></div>
+      <div className="bg-[#151B23] rounded-lg p-2"><p className="text-[6px] text-zinc-500 uppercase">Monthly</p><p className="text-[12px] font-black">₹18,200</p><p className="text-[6px] text-zinc-500">This month</p></div>
+    </div>
+    <div className="bg-[#151B23] rounded-lg p-2 mb-2"><p className="text-[6px] text-zinc-500 uppercase">Add Expense</p><p className="text-[14px] font-black text-zinc-700">₹ 0</p></div>
+    <div className="bg-[#151B23] rounded-lg p-2">
+      <p className="text-[6px] text-zinc-500 uppercase mb-1">Recent</p>
+      {[{n:'Zomato',a:'₹450',c:'#22C55E', i:S.Food},{n:'Uber',a:'₹180',c:'#3B82F6', i:S.Transport},{n:'Amazon',a:'₹649',c:'#F97316', i:S.Shopping}].map((x,i)=>(
+        <div key={i} className="flex justify-between items-center py-1 border-t border-white/5 first:border-0">
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><span className="text-zinc-300">{x.n}</span></div>
+          <span className="font-bold text-zinc-300">{x.a}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const MockInsights = () => (
+  <div>
+    <p className="font-black text-[10px] mb-2">Insights</p>
+    <div className="grid grid-cols-2 gap-1.5 mb-2">
+      <div className="bg-[#151B23] rounded-lg p-2"><p className="text-[6px] text-zinc-500 uppercase">Total</p><p className="text-[11px] font-black text-[#22C55E]">₹18,200</p></div>
+      <div className="bg-[#151B23] rounded-lg p-2"><p className="text-[6px] text-zinc-500 uppercase">Transactions</p><p className="text-[11px] font-black">42</p></div>
+    </div>
+    <div className="bg-[#151B23] rounded-lg p-2">
+      <p className="text-[6px] text-zinc-500 uppercase mb-1.5">Breakdown</p>
+      {[{n:'Food',p:38,c:'#22C55E'},{n:'Transport',p:22,c:'#3B82F6'},{n:'Shopping',p:18,c:'#F97316'},{n:'Bills',p:14,c:'#A855F7'},{n:'Fun',p:8,c:'#EAB308'}].map((x,i)=>(
+        <div key={i} className="mb-1.5">
+          <div className="flex justify-between mb-0.5"><span className="text-zinc-400">{x.n}</span><span className="font-bold text-zinc-300">{x.p}%</span></div>
+          <div className="w-full h-1 bg-zinc-800 rounded-full"><div className="h-full rounded-full" style={{width:`${x.p}%`,backgroundColor:x.c}}/></div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const MockHistory = () => (
+  <div>
+    <p className="font-black text-[10px] mb-2">History</p>
+    <p className="text-[6px] text-zinc-500 uppercase font-bold mb-1">24 Apr 2026</p>
+    <div className="bg-[#151B23] rounded-lg overflow-hidden mb-2">
+      {[{n:'Zomato',a:'₹320',c:'#22C55E',t:'Food', i:S.Food},{n:'Petrol',a:'₹1,200',c:'#3B82F6',t:'Transport', i:S.Transport},{n:'Amazon',a:'₹2,499',c:'#F97316',t:'Shopping', i:S.Shopping}].map((x,i)=>(
+        <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <span className="font-bold text-zinc-300">{x.a}</span>
+        </div>
+      ))}
+    </div>
+    <p className="text-[6px] text-zinc-500 uppercase font-bold mb-1">23 Apr 2026</p>
+    <div className="bg-[#151B23] rounded-lg overflow-hidden">
+      {[{n:'Rent',a:'₹18,000',c:'#F472B6',t:'Home', i:S.Home},{n:'Netflix',a:'₹649',c:'#A855F7',t:'Bills', i:S.Bills}].map((x,i)=>(
+        <div key={i} className="flex justify-between items-center p-2 border-t border-white/5 first:border-0">
+          <div className="flex items-center gap-1.5"><div className="p-1 rounded bg-white/5 text-[8px]" style={{color:x.c}}><x.i /></div><div><p className="text-zinc-300 font-bold">{x.n}</p><p className="text-zinc-500" style={{fontSize:'5px'}}>{x.t}</p></div></div>
+          <span className="font-bold text-zinc-300">{x.a}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const MockCoach = () => (
+  <div>
+    <div className="flex items-center gap-1.5 mb-2"><div className="w-4 h-4 bg-[#22C55E]/20 rounded-md flex items-center justify-center text-[#22C55E]"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg></div><div><p className="font-black text-[9px]">Ledger Coach</p><p className="text-[5px] text-zinc-500">POWERED BY GROQ AI</p></div></div>
+    <div className="space-y-1.5">
+      <div className="bg-white/5 rounded-lg p-2 max-w-[85%] text-zinc-300"><p>Hey Harsha! You've spent ₹2,450 today. Your biggest expense was ₹450 on Swiggy.</p></div>
+      <div className="bg-[#22C55E] rounded-lg p-2 max-w-[75%] ml-auto text-black font-bold"><p>How can I save more?</p></div>
+      <div className="bg-white/5 rounded-lg p-2 max-w-[85%] text-zinc-300"><p>Cut food delivery by 30% — cook 3x/week to save ₹2,000/month! 🎯</p></div>
+      <div className="bg-[#22C55E] rounded-lg p-2 max-w-[75%] ml-auto text-black font-bold"><p>Recap my day</p></div>
+    </div>
+    <div className="mt-2 flex gap-1">
+      {['Save tips','My spend?'].map((s,i)=><div key={i} className="px-2 py-1 bg-white/5 rounded-full text-[6px] text-zinc-400 font-bold">{s}</div>)}
+    </div>
+  </div>
+);
+
+// ─── LANDING PAGE ───────────────────────────────────────────
+const LandingPage = () => {
+  const [showDemo, setShowDemo] = useState(false);
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      navigate('/app', { replace: true });
+      return;
+    }
+    const h = (e) => { e.preventDefault(); setDeferredPrompt(e); };
+    window.addEventListener('beforeinstallprompt', h);
+    return () => window.removeEventListener('beforeinstallprompt', h);
+  }, [navigate]);
+
+  const handleTry = () => {
+    localStorage.removeItem('ledger_transactions');
+    navigate('/app?trial=true');
+  };
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      setShowInstallInstructions(true);
+    }
+  };
+
+  return (
+    <div className="bg-[#0A0E14] text-white min-h-screen overflow-y-auto scroll-smooth no-scrollbar font-sans">
+      {/* 1: Hero */}
+      <section className="min-h-screen w-full flex flex-col items-center justify-center relative px-6 py-20">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#22c55e15,transparent_50%)]" />
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="z-10 text-center">
+          <div className="flex items-center justify-center mb-6">
+            <h1 className="text-4xl font-black tracking-tighter uppercase">Ledger</h1>
+          </div>
+          <h2 className="text-6xl md:text-8xl font-black tracking-tight mb-6 leading-[0.9] uppercase">Finance, <br /><span className="text-[#22C55E]">Redefined.</span></h2>
+          <p className="text-zinc-300 text-lg max-w-lg mx-auto mb-10 font-medium">A privacy-first expense tracker built for the next generation.</p>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-6">
+            <button onClick={handleTry} className="px-8 py-4 bg-[#22C55E] text-black font-black rounded-2xl flex items-center gap-2 shadow-2xl active:scale-95 transition-transform">Try <span className="underline decoration-2">Ledger</span> <S.Arrow /></button>
+            <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"><span className="text-[#22C55E]"><S.Play /></span> Live Demo</button>
+          </div>
+          <div className="flex justify-center mt-6">
+            <button onClick={handleInstall} className="flex items-center gap-3 px-6 py-3 bg-[#151B23] border border-[#22C55E]/30 rounded-full text-sm font-bold text-[#22C55E] hover:bg-[#22C55E]/10 transition-colors">
+              <S.Zap /> Install Ledger for faster access
+            </button>
+          </div>
+        </motion.div>
+        <div className="absolute bottom-10 opacity-20 animate-bounce"><S.Down /></div>
+      </section>
+
+      {/* 2: Landscape */}
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24 bg-white/[0.02]">
+        <div className="max-w-6xl mx-auto w-full">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">02 / The Landscape</span>
+          <h2 className="text-5xl md:text-7xl font-black mb-12 leading-tight uppercase">Meet the <br /><span className="text-zinc-700">Old Guard.</span></h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {['Mint', 'YNAB', 'Expensify'].map(n => (<div key={n} className="p-8 bg-[#151B23] border border-white/5 rounded-3xl"><h3 className="text-2xl font-black text-zinc-400">{n}</h3><p className="text-xs font-bold text-zinc-500 mt-2">Cloud-Based <span className="text-[#22C55E]">Legacy</span> System</p></div>))}
+          </div>
+          <p className="mt-12 text-zinc-300 font-medium text-lg max-w-xl leading-relaxed">Most apps sell your <span className="text-[#22C55E]">financial data</span> to advertisers. In 2026, privacy isn't a feature—it's a <span className="text-[#22C55E]">human right</span>.</p>
+        </div>
+      </section>
+
+      {/* 3: Problem */}
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
+        <div className="max-w-6xl mx-auto w-full">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-4 block">03 / The Problem</span>
+          <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight uppercase">The <span className="text-red-500">Fatal</span> Flaws.</h2>
+          <div className="space-y-6 max-w-xl">
+            <Tile icon={S.Shield} title="You Own Everything" desc="Ledger lives on your phone. No banks, no servers, no strangers. <span class='text-[#22C55E]'>You are in control.</span>" />
+            <Tile icon={S.Zap} title="No Internet? No Problem." desc="Record your expenses anywhere. Even in remote areas. <span class='text-[#22C55E]'>Always works.</span>" />
+            <Tile icon={S.Activity} title="Lightning Fast" desc="Stop waiting for slow apps. Log your spend in <span class='text-[#22C55E]'>2 seconds</span> and get on with your day." />
+          </div>
+        </div>
+      </section>
+
+      {/* 4: Turning Point */}
+      <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-20 text-center">
+        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-8 block">04 / The Vision</span>
+        <h2 className="text-5xl md:text-8xl font-black leading-[0.9] mb-12 uppercase">"Your money <br />is <span className="text-[#22C55E] italic">your</span> business."</h2>
+        <p className="text-xl text-zinc-300 font-medium max-w-2xl mx-auto italic">No cloud. No middleman. No compromises.</p>
+      </section>
+
+      {/* 5: Solution */}
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
+        <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
+          <div className="hidden md:block scale-125"><PhoneMock title="Home" desc="Quick overview of your spending."><MockHome /></PhoneMock></div>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">05 / The Solution</span>
+            <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
+            <p className="text-xl text-zinc-300 font-medium mb-8">A powerful tool that puts your <span className="text-[#22C55E]">entire finance</span> in your pocket.</p>
+            <ul className="space-y-4">
+              {['100% Offline Processing', 'Your Data Never Leaves Your Device', 'Zero Data Harvesting'].map(t => (
+                <li key={t} className="flex items-center gap-3 font-bold text-sm text-zinc-400"><div className="w-5 h-5 bg-[#22C55E]/20 rounded-full flex items-center justify-center text-[#22C55E]"><S.Check /></div><span className="group-hover:text-white transition-colors">{t}</span></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* 6: Comparison */}
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
+        <div className="max-w-5xl mx-auto w-full">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-8 block text-center">06 / Market Edge</span>
+          <h2 className="text-5xl font-black mb-16 text-center uppercase">Ledger <span className="text-zinc-700">vs</span> The Rest.</h2>
+          <div className="bg-[#151B23] border border-white/5 rounded-3xl overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead><tr className="bg-white/5"><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">Feature</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-[#22C55E]">Ledger</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Others</th></tr></thead>
+              <tbody className="divide-y divide-white/5">
+                <Row title="Data Ownership" ledger="100% User Owned" other="Corporate Servers" />
+                <Row title="Security" ledger="Local Storage Only" other="Public Cloud" />
+                <Row title="Internet" ledger="Offline-First" other="Needs Connectivity" />
+                <Row title="Privacy" ledger="Zero Harvesting" other="Data For Sale" />
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* 7: App Preview — 4 Screenshots */}
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
+        <div className="max-w-6xl mx-auto w-full">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block text-center">07 / Inside The App</span>
+          <h2 className="text-5xl font-black mb-4 text-center uppercase">See It In <span className="text-[#22C55E]">Action.</span></h2>
+          <p className="text-zinc-400 text-center mb-12 max-w-lg mx-auto">Real interface. Real data. Four views that give you complete control over your finances.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <PhoneMock title="Dashboard" desc="Track daily & monthly spending at a glance with instant logging."><MockHome /></PhoneMock>
+            <PhoneMock title="Insights" desc="Visual breakdown of where every rupee goes with smart analytics."><MockInsights /></PhoneMock>
+            <PhoneMock title="History" desc="Full transaction log grouped by date. Delete or review anytime."><MockHistory /></PhoneMock>
+            <PhoneMock title="AI Coach" desc="Ask your personal finance coach anything. Powered by Groq AI."><MockCoach /></PhoneMock>
+          </div>
+        </div>
+      </section>
+
+      {/* 8: CTA */}
+      <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-20 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,#22c55e15,transparent_50%)]" />
+        <div className="text-center z-10">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-12 block">08 / Try It</span>
+          <h2 className="text-6xl md:text-9xl font-black mb-12 uppercase leading-none">Your <span className="text-[#22C55E]">Money</span>,<br />Your Data.</h2>
+          <p className="text-zinc-300 mb-16 max-w-lg mx-auto text-lg font-medium italic">Join the <span className="text-[#22C55E]">privacy revolution</span>. 100% Free. No setup required.</p>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <button onClick={handleTry} className="px-12 py-6 bg-white text-black font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E] transition-all active:scale-95 shadow-2xl"><S.Phone /> Launch App</button>
+            <button onClick={handleInstall} className="px-12 py-6 bg-[#151B23] border border-[#22C55E]/30 text-[#22C55E] font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E]/10 transition-all active:scale-95 shadow-2xl"><S.Zap /> Install App</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 border-t border-white/5 px-6 bg-[#0A0E14]">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2"><span className="text-[#22C55E]"><S.Logo /></span><span className="font-bold uppercase tracking-tighter">Ledger</span></div>
+          <p className="text-zinc-500 text-xs italic">Private. Secure. Yours.</p>
+        </div>
+      </footer>
+
+      {/* Install Instructions Modal */}
+      <AnimatePresence>
+        {showInstallInstructions && (
+          <div className="fixed inset-0 z-[250] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowInstallInstructions(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-[#151B23] border border-white/10 rounded-[2rem] p-8 max-w-sm w-full text-center">
+              <button onClick={() => setShowInstallInstructions(false)} className="absolute top-4 right-4 text-zinc-500"><S.X /></button>
+              <div className="p-4 bg-[#22C55E]/10 rounded-2xl w-fit mx-auto mb-6 text-[#22C55E]"><S.Share /></div>
+              <h3 className="text-xl font-black mb-3 uppercase tracking-tight">Add to Home Screen</h3>
+              <p className="text-zinc-400 text-sm mb-6 leading-relaxed">To install Ledger as an app:</p>
+              <div className="text-left space-y-3 mb-6">
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">1.</span><p className="text-sm text-zinc-300">Tap the <strong>Share</strong> or <strong>⋮</strong> menu button</p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">2.</span><p className="text-sm text-zinc-300">Select <strong>"Add to Home Screen"</strong></p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">3.</span><p className="text-sm text-zinc-300">Tap <strong>"Add"</strong> — done!</p></div>
+              </div>
+              <button onClick={() => setShowInstallInstructions(false)} className="w-full py-3 bg-[#22C55E] text-black font-black rounded-xl active:scale-95 transition-transform">Got it!</button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Demo Modal */}
+      <AnimatePresence>
+        {showDemo && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowDemo(false)} className="absolute inset-0 bg-black/95 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative w-full max-w-lg bg-[#151B23] border border-white/10 rounded-[2rem] p-12 text-center">
+              <button onClick={() => setShowDemo(false)} className="absolute top-6 right-6 p-2 text-zinc-500"><S.X /></button>
+              <div className="p-6 bg-[#22C55E]/10 rounded-full w-fit mx-auto mb-6 text-[#22C55E]"><S.Play /></div>
+              <h3 className="text-3xl font-black mb-4 uppercase tracking-tighter">Demo Preview</h3>
+              <p className="text-zinc-400 font-medium">Use "Try Ledger" to experience the app live.</p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default LandingPage;
+
+
+--- src/components/Sparkline.jsx ---
+
+import React from 'react';
+
+const Sparkline = ({ data, color = "#22C55E" }) => {
+  // Simple SVG sparkline generator
+  const width = 200;
+  const height = 40;
+  const padding = 5;
+  
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  
+  const points = data.map((val, i) => {
+    const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
+    const y = height - ((val - min) / range) * (height - padding * 2) - padding;
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+      <polyline
+        fill="none"
+        stroke={color}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        points={points}
+      />
+      {/* Small dot at the end */}
+      <circle 
+        cx={width - padding} 
+        cy={height - ((data[data.length - 1] - min) / range) * (height - padding * 2) - padding} 
+        r="3" 
+        fill={color} 
+      />
+    </svg>
+  );
+};
+
+export default Sparkline;
+
+
+--- src/constants/categories.js ---
+
+export const CATEGORIES = [
+  { id: 'food', name: 'Food & Dining', icon: 'Utensils', color: '#22C55E' },
+  { id: 'shopping', name: 'Shopping', icon: 'ShoppingBag', color: '#F97316' },
+  { id: 'transport', name: 'Transport', icon: 'Car', color: '#3B82F6' },
+  { id: 'bills', name: 'Bills & Utilities', icon: 'Receipt', color: '#A855F7' },
+  { id: 'entertainment', name: 'Entertainment', icon: 'Gamepad2', color: '#EAB308' },
+  { id: 'health', name: 'Health', icon: 'HeartPulse', color: '#F87171' },
+  { id: 'travel', name: 'Travel', icon: 'Plane', color: '#2DD4BF' },
+  { id: 'groceries', name: 'Groceries', icon: 'ShoppingCart', color: '#4ADE80' },
+  { id: 'education', name: 'Education', icon: 'GraduationCap', color: '#60A5FA' },
+  { id: 'personal', name: 'Personal Care', icon: 'Sparkles', color: '#C084FC' },
+  { id: 'rent', name: 'Rent & Home', icon: 'Home', color: '#F472B6' },
+  { id: 'subscription', name: 'Subscriptions', icon: 'RefreshCw', color: '#818CF8' },
+  { id: 'insurance', name: 'Insurance', icon: 'Shield', color: '#FB923C' },
+  { id: 'gifts', name: 'Gifts & Charity', icon: 'Gift', color: '#FCA5A5' },
+  { id: 'pets', name: 'Pets', icon: 'PawPrint', color: '#A78BFA' },
+  { id: 'income', name: 'Income', icon: 'TrendingUp', color: '#34D399' },
+  { id: 'other', name: 'Others', icon: 'CircleEllipsis', color: '#64748B' }
+];
+
+
+--- src/constants/categoryIcons.jsx ---
+
+import React from 'react';
+
+// ─── CATEGORY SVG ICONS ─────────────────────────────────────────────────
+// Each icon is a small, recognizable SVG. No external dependencies.
+
+const catIcons = {
+  food: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
+    </svg>
+  ),
+  shopping: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+  ),
+  transport: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>
+    </svg>
+  ),
+  bills: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+    </svg>
+  ),
+  entertainment: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/>
+    </svg>
+  ),
+  health: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+    </svg>
+  ),
+  travel: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+    </svg>
+  ),
+  groceries: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+    </svg>
+  ),
+  education: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/>
+    </svg>
+  ),
+  personal: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+    </svg>
+  ),
+  rent: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  ),
+  subscription: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>
+    </svg>
+  ),
+  insurance: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  ),
+  gifts: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+    </svg>
+  ),
+  pets: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 5c0 1.6-1.3 3-3 3S5 6.6 5 5s1.3-3 3-3 3 1.4 3 3zM19 5c0 1.6-1.3 3-3 3s-3-1.4-3-3 1.3-3 3-3 3 1.4 3 3zM12 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM4 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM20 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+    </svg>
+  ),
+  income: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+    </svg>
+  ),
+  other: (color) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+    </svg>
+  ),
+};
+
+export const getCategoryIcon = (categoryId, color = '#fff') => {
+  const iconFn = catIcons[categoryId] || catIcons.other;
+  return iconFn(color);
+};
+
+export default catIcons;
+
+
+--- src/constants/config.js ---
+
+export const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+
+
+--- src/constants/demoData.js ---
+
+export const seedDemoData = () => {
+  const seeded = localStorage.getItem('kuber_demo_seeded');
+  if (seeded) return;
+
+  const now = new Date();
+  const getPastDate = (daysAgo) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - daysAgo);
+    return d.toISOString();
+  };
+
+  const demoTransactions = [
+    { id: 'd1', amount: 450, type: 'expense', categoryId: 'food', note: 'Zomato', date: getPastDate(0) },
+    { id: 'd2', amount: 180, type: 'expense', categoryId: 'transport', note: 'Uber', date: getPastDate(0) },
+    { id: 'd3', amount: 1450, type: 'expense', categoryId: 'food', note: 'Dinner with friends', date: getPastDate(1) },
+    { id: 'd4', amount: 649, type: 'expense', categoryId: 'subscription', note: 'Netflix', date: getPastDate(1) },
+    { id: 'd5', amount: 3200, type: 'expense', categoryId: 'groceries', note: 'Weekly Groceries', date: getPastDate(2) },
+    { id: 'd6', amount: 600, type: 'expense', categoryId: 'food', note: 'Swiggy', date: getPastDate(2) },
+    { id: 'd7', amount: 2499, type: 'expense', categoryId: 'shopping', note: 'Amazon', date: getPastDate(3) },
+    { id: 'd8', amount: 1200, type: 'expense', categoryId: 'transport', note: 'Petrol', date: getPastDate(4) },
+    { id: 'd9', amount: 500, type: 'expense', categoryId: 'health', note: 'Pharmacy', date: getPastDate(4) },
+    { id: 'd10', amount: 300, type: 'expense', categoryId: 'food', note: 'Lunch at Cafe', date: getPastDate(5) },
+    { id: 'd11', amount: 18000, type: 'expense', categoryId: 'rent', note: 'Rent', date: getPastDate(6) },
+    { id: 'd12', amount: 25000, type: 'income', categoryId: 'income', note: 'Stipend', date: getPastDate(6) },
+  ];
+
+  const demoBudgets = {
+    'food': 3000 // 2800 spent / 3000 limit = 93.3% -> Warning state
+  };
+
+  localStorage.setItem('kuber_transactions', JSON.stringify(demoTransactions));
+  localStorage.setItem('kuber_budgets', JSON.stringify(demoBudgets));
+  localStorage.setItem('kuber_demo_seeded', 'true');
+};
+
+
+--- src/hooks/useBudgets.js ---
+
+import { useState, useEffect } from 'react';
+
+export const useBudgets = () => {
+  const [budgets, setBudgets] = useState(() => {
+    const saved = localStorage.getItem('kuber_budgets');
+    if (saved) return JSON.parse(saved);
+    return {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem('kuber_budgets', JSON.stringify(budgets));
+  }, [budgets]);
+
+  const setBudget = (categoryId, limit) => {
+    setBudgets(prev => ({
+      ...prev,
+      [categoryId]: parseFloat(limit) || 0
+    }));
+  };
+
+  const getBudget = (categoryId) => {
+    return budgets[categoryId] || 0;
+  };
+
+  const getBudgetStatus = (categoryId, month, year, transactions) => {
+    const limit = getBudget(categoryId);
+    if (!limit) return null;
+
+    const spent = transactions
+      .filter(t => t.type === 'expense' && t.categoryId === categoryId)
+      .filter(t => {
+        const d = new Date(t.date);
+        return d.getMonth() === month && d.getFullYear() === year;
+      })
+      .reduce((sum, t) => sum + t.amount, 0);
+
+    const percentUsed = (spent / limit) * 100;
+    
+    return {
+      spent,
+      limit,
+      remaining: limit - spent,
+      percentUsed,
+      isWarning: percentUsed >= 80 && percentUsed < 100,
+      isOver: percentUsed >= 100
+    };
+  };
+
+  return {
+    budgets,
+    setBudget,
+    getBudget,
+    getBudgetStatus
+  };
+};
+
+
+--- src/hooks/useTransactions.js ---
+
+import { useState, useEffect } from 'react';
+import { useBudgets } from './useBudgets';
+import { validateAmount, validateNote, validateCategory } from '../utils/validate';
+import { CATEGORIES } from '../constants/categories';
+
+export const useTransactions = () => {
+  const { getBudgetStatus, budgets } = useBudgets();
+
+  const [userName, setUserName] = useState(() => {
+    return localStorage.getItem('kuber_user_name') || '';
+  });
+
+  const [transactions, setTransactions] = useState(() => {
+    const saved = localStorage.getItem('kuber_transactions');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.map(t => ({ ...t, type: t.type || 'expense' }));
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('kuber_transactions', JSON.stringify(transactions));
+  }, [transactions]);
+
+  useEffect(() => {
+    if (userName) {
+      localStorage.setItem('kuber_user_name', userName);
+    }
+  }, [userName]);
+
+  const addTransaction = (amount, type, categoryId, note = '') => {
+    const amountVal = validateAmount(amount);
+    if (!amountVal.valid) throw new Error(amountVal.error);
+
+    const typeValid = type === 'income' || type === 'expense';
+    if (!typeValid) throw new Error('Type must be income or expense');
+
+    const catVal = validateCategory(categoryId);
+    if (!catVal.valid) throw new Error(catVal.error);
+
+    if (note) {
+      const noteVal = validateNote(note);
+      if (!noteVal.valid) throw new Error(noteVal.error);
+    }
+
+    const newTransaction = {
+      id: Date.now().toString(),
+      amount: parseFloat(amount),
+      type,
+      categoryId,
+      note: note || '',
+      date: new Date().toISOString(),
+    };
+    
+    setTransactions(prev => [newTransaction, ...prev]);
+  };
+
+  const deleteTransaction = (id) => {
+    setTransactions(prev => prev.filter(t => t.id !== id));
+  };
+
+  const clearAllData = () => {
+    setTransactions([]);
+    localStorage.removeItem('kuber_budgets');
+  };
+
+  const getStats = () => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    
+    let spentToday = 0, earnedToday = 0;
+    let spentThisMonth = 0, earnedThisMonth = 0;
+
+    const categoryTotals = {};
+    const daysLogged = new Set();
+
+    transactions.forEach(t => {
+      const d = new Date(t.date);
+      const tTime = d.getTime();
+      const tDateStr = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      daysLogged.add(tDateStr);
+
+      if (tTime >= todayStart) {
+        if (t.type === 'expense') spentToday += t.amount;
+        else if (t.type === 'income') earnedToday += t.amount;
+      }
+
+      if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+        if (t.type === 'expense') {
+          spentThisMonth += t.amount;
+          categoryTotals[t.categoryId] = (categoryTotals[t.categoryId] || 0) + t.amount;
+        } else if (t.type === 'income') {
+          earnedThisMonth += t.amount;
+        }
+      }
+    });
+
+    const netToday = earnedToday - spentToday;
+    const netThisMonth = earnedThisMonth - spentThisMonth;
+    const dailyAverageSpend = spentThisMonth / (now.getDate()) || 0;
+
+    let topExpenseCategory = null;
+    let maxSpend = 0;
+    Object.entries(categoryTotals).forEach(([catId, amount]) => {
+      if (amount > maxSpend) {
+        maxSpend = amount;
+        const cat = CATEGORIES.find(c => c.id === catId);
+        topExpenseCategory = { name: cat ? cat.name : catId, amount };
+      }
+    });
+
+    const dates = Array.from(daysLogged).sort((a, b) => b - a);
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    
+    let checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    
+    if (dates.length > 0) {
+      if (dates[0] === checkDate || dates[0] === checkDate - 86400000) {
+        let expected = dates[0];
+        for (let i = 0; i < dates.length; i++) {
+          if (dates[i] === expected) {
+            currentStreak++;
+            expected -= 86400000;
+          } else {
+            break;
+          }
+        }
+      }
+
+      tempStreak = 1;
+      longestStreak = 1;
+      for (let i = 0; i < dates.length - 1; i++) {
+        const diff = dates[i] - dates[i+1];
+        if (diff === 86400000) {
+          tempStreak++;
+          longestStreak = Math.max(longestStreak, tempStreak);
+        } else {
+          tempStreak = 1;
+        }
+      }
+    }
+    
+    return {
+      spentToday, earnedToday, netToday,
+      spentThisMonth, earnedThisMonth, netThisMonth,
+      dailyAverageSpend,
+      currentStreak, longestStreak,
+      topExpenseCategory
+    };
+  };
+
+  const getBudgetStatuses = () => {
+    const now = new Date();
+    const statuses = {};
+    Object.keys(budgets).forEach(catId => {
+      statuses[catId] = getBudgetStatus(catId, now.getMonth(), now.getFullYear(), transactions);
+    });
+    return statuses;
+  };
+
+  const exportData = () => {
+    const data = {
+      app: "Ledger",
+      version: "2.0.0",
+      exportedAt: new Date().toISOString(),
+      transactions,
+      budgets
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ledger-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return {
+    transactions,
+    userName,
+    setUserName,
+    addTransaction,
+    deleteTransaction,
+    clearAllData,
+    getStats,
+    getBudgetStatuses,
+    exportData
+  };
+};
+
+
+--- src/index.css ---
+
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0A0E14;
+  --color-surface: #151B23;
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  
+  --color-ledger-green: #22C55E;
+  --color-ledger-orange: #F97316;
+  --color-ledger-blue: #3B82F6;
+  --color-ledger-purple: #A855F7;
+  --color-ledger-yellow: #EAB308;
+
+  --font-sans: "Outfit", "Inter", system-ui, sans-serif;
+  --font-display: "Outfit", "Inter", sans-serif;
+
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-slide-up: slideUp 0.5s ease-out forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-white antialiased font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .ledger-card {
+    @apply bg-surface border border-white/5 rounded-2xl p-4;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+html, body, #root {
+  height: 100%;
+  overflow-y: auto;
+  background-color: #0A0E14;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+
+--- src/main.jsx ---
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { seedDemoData } from './constants/demoData.js'
+
+// Seed initial data if needed
+seedDemoData();
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  </StrictMode>,
+)
+
+
+--- src/utils/search.js ---
+
+export const searchTransactions = (transactions, query) => {
+  if (!query || !query.trim()) return transactions;
+  
+  const q = query.trim().toLowerCase();
+  return transactions.filter(t => {
+    const noteMatch = t.note && t.note.toLowerCase().includes(q);
+    const catMatch = t.categoryId && t.categoryId.toLowerCase().includes(q);
+    const amountMatch = t.amount.toString().includes(q);
+    return noteMatch || catMatch || amountMatch;
+  });
+};
+
+export const filterByCategory = (transactions, categoryId) => {
+  if (!categoryId) return transactions;
+  return transactions.filter(t => t.categoryId === categoryId);
+};
+
+export const filterByType = (transactions, type) => {
+  if (!type) return transactions;
+  return transactions.filter(t => t.type === type);
+};
+
+export const groupByDate = (transactions) => {
+  const grouped = {};
+  transactions.forEach(t => {
+    const date = new Date(t.date);
+    const dateStr = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+    if (!grouped[dateStr]) {
+      grouped[dateStr] = [];
+    }
+    grouped[dateStr].push(t);
+  });
+  return grouped;
+};
+
+
+--- src/utils/validate.js ---
+
+import { CATEGORIES } from '../constants/categories';
+
+export const validateAmount = (val) => {
+  const num = parseFloat(val);
+  if (isNaN(num)) return { valid: false, error: 'Amount must be a number' };
+  if (num <= 0) return { valid: false, error: 'Amount must be greater than 0' };
+  if (num > 1000000) return { valid: false, error: 'Amount cannot exceed ₹10,00,000' };
+  
+  const str = val.toString();
+  if (str.includes('.')) {
+    const decimals = str.split('.')[1];
+    if (decimals.length > 2) return { valid: false, error: 'Amount can have at most 2 decimal places' };
+  }
+  
+  return { valid: true };
+};
+
+export const validateNote = (note) => {
+  if (typeof note !== 'string') return { valid: false, error: 'Note must be a string' };
+  if (note.length > 60) return { valid: false, error: 'Note cannot exceed 60 characters' };
+  
+  const stripped = note.replace(/<[^>]*>?/gm, '');
+  if (stripped !== note) return { valid: false, error: 'Note cannot contain HTML tags' };
+  
+  return { valid: true };
+};
+
+export const validateCategory = (id) => {
+  const exists = CATEGORIES.some(c => c.id === id);
+  if (!exists) return { valid: false, error: 'Invalid category' };
+  return { valid: true };
+};
+
+
+--- vite.config.js ---
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+    VitePWA({
+      registerType: 'prompt',
+      includeAssets: ['logo.png', 'favicon.svg', 'icon-192x192.png', 'icon-512x512.png', 'icon-maskable-512x512.png'],
+      manifest: {
+        name: 'Ledger',
+        short_name: 'Ledger',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#0A0E14',
+        theme_color: '#0A0E14',
+        description: 'Privacy-first offline expense tracker',
+        icons: [
+          {
+            src: 'icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'icon-maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          }
+        ]
+      }
+    })
+  ],
+})
+
+
+--- index.html ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0A0E14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Ledger" />
+    <title>Ledger | Expense Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      body {
+        overscroll-behavior-y: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+--- package.json ---
+
+{
+  "name": "ledger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
+    "@tailwindcss/vite": "^4.2.4",
+    "autoprefixer": "^10.5.0",
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.9.0",
+    "postcss": "^8.5.10",
+    "react": "^19.2.5",
+    "react-chartjs-2": "^5.3.1",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.2",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.4",
+    "vite-plugin-pwa": "^1.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.2.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "vite": "^6.0.0"
+  }
+}

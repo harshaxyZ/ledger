@@ -3,13 +3,14 @@ import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { CATEGORIES } from '../constants/categories';
 import { getCategoryIcon } from '../constants/categoryIcons';
+import { motion } from 'framer-motion';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Analysis = ({ transactions }) => {
   const dataByCategory = CATEGORIES.map(cat => {
     const total = transactions
-      .filter(t => t.categoryId === cat.id)
+      .filter(t => t.type === 'expense' && t.categoryId === cat.id)
       .reduce((sum, t) => sum + t.amount, 0);
     return { ...cat, total };
   }).filter(cat => cat.total > 0).sort((a, b) => b.total - a.total);
@@ -33,10 +34,15 @@ const Analysis = ({ transactions }) => {
 
   const totalSpent = dataByCategory.reduce((sum, c) => sum + c.total, 0);
 
-  if (totalSpent === 0) return null;
+  if (totalSpent === 0) return (
+    <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl mb-4 text-center">
+      <p className="text-xs text-zinc-500">No spending data yet</p>
+      <p className="text-[10px] text-zinc-600 mt-1">Add expenses to see your breakdown</p>
+    </div>
+  );
 
   return (
-    <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl mb-4">
+    <motion.div whileHover={{ scale: 1.02 }} className="p-4 bg-[#151B23] border border-white/5 rounded-2xl mb-4">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-sm font-semibold text-zinc-300">Spending overview</h3>
         <span className="text-[11px] text-zinc-500 font-medium">This month</span>
@@ -78,7 +84,7 @@ const Analysis = ({ transactions }) => {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

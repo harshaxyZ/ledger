@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CATEGORIES } from './constants/categories';
 import { getCategoryIcon } from './constants/categoryIcons';
 import { useTransactions } from './hooks/useTransactions';
+import { useBudgets } from './hooks/useBudgets';
 import Analysis from './components/Analysis';
 import AIAdvisor from './components/AIAdvisor';
 import Sparkline from './components/Sparkline';
@@ -38,6 +39,7 @@ const I = {
 
 const Tracker = () => {
   const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats, getBudgetStatuses, exportData } = useTransactions();
+  const { setBudget, getBudget } = useBudgets();
   const [activeTab, setActiveTab] = useState('home');
   const [showOnboarding, setShowOnboarding] = useState(!userName);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -83,158 +85,38 @@ const Tracker = () => {
   };
 
   const handleOnboarding = () => { if (tempName.trim()) { setUserName(tempName.trim()); setShowOnboarding(false); if ("Notification" in window) Notification.requestPermission(); } };
-  const simulateNotif = () => { setShowToast(true); setTimeout(() => setShowToast(false), 5000); };
   const handleReset = () => { if (window.confirm("Clear all logs?")) { clearAllData(); setIsSettingsOpen(false); } };
-  const trendData = [400, 600, 450, 700, 650, 800, 750, 900, 850, 1000];
+  
+  const getTrendData = () => {
+    const data = [];
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const start = d.getTime();
+      const end = start + 86400000;
+      const spent = transactions
+        .filter(t => t.type === 'expense' && new Date(t.date).getTime() >= start && new Date(t.date).getTime() < end)
+        .reduce((sum, t) => sum + t.amount, 0);
+      data.push(spent);
+    }
+    return data;
+  };
+  const trendData = getTrendData();
 
   const handleInstallApp = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') setDeferredPrompt(null);
+    } else {
+      setShowInstallTip(true);
     }
   };
 
   const warnings = Object.entries(budgetStatuses).filter(([_, status]) => status && status.isWarning);
 
-  // Render active tab content
-  const renderContent = () => {
-    if (activeTab === 'history') return <History transactions={transactions} deleteTransaction={deleteTransaction} />;
-    if (activeTab === 'insights') return <Insights transactions={transactions} />;
-    // Home tab
-    return (
-      <main className="flex-1 px-5 space-y-4 overflow-y-auto no-scrollbar pb-4">
-        {deferredPrompt && (
-          <button onClick={handleInstallApp} className="w-full bg-gradient-to-r from-[#22C55E]/10 to-transparent border border-[#22C55E]/20 rounded-2xl p-4 flex items-center justify-between text-left active:scale-95 transition-transform mb-2">
-            <div>
-              <h4 className="font-bold text-[#22C55E] text-sm mb-1">Install Ledger</h4>
-              <p className="text-[10px] text-zinc-400">Add to home screen for faster access</p>
-            </div>
-            <div className="px-3 py-1.5 bg-[#22C55E] text-black text-[10px] font-black rounded-lg uppercase tracking-wider">Install</div>
-          </button>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Earned</p>
-            <h2 className="text-xl font-bold text-[#22C55E]">₹{stats.earnedThisMonth.toLocaleString()}</h2>
-            <p className="text-[10px] text-zinc-500 mt-1">This month</p>
-            <div className="mt-3 flex justify-end"><div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><I.Down /></div></div>
-          </div>
-          <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent</p>
-            <h2 className="text-xl font-bold">₹{stats.spentThisMonth.toLocaleString()}</h2>
-            <p className="text-[10px] text-zinc-500 mt-1">This month</p>
-            <div className="mt-3 flex justify-end"><div className="p-2 bg-orange-500/10 rounded-full text-orange-500"><I.Up /></div></div>
-          </div>
-        </div>
-        
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl flex justify-between items-start">
-          <div>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Net Balance</p>
-            <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-orange-500' : 'text-white'}`}>
-              {stats.netThisMonth < 0 ? '-' : ''}₹{Math.abs(stats.netThisMonth).toLocaleString()}
-            </h2>
-          </div>
-          <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#F97316" : "#22C55E"} />
-        </div>
-
-        {/* Budget Warnings */}
-        {warnings.length > 0 && (
-          <div className="space-y-2">
-            {warnings.map(([catId, status]) => {
-              const cat = CATEGORIES.find(c => c.id === catId);
-              return (
-                <div key={catId} className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3">
-                  <div className="text-orange-500"><I.Alert /></div>
-                  <div className="flex-1">
-                    <p className="text-xs font-bold text-orange-500">Warning: {cat?.name} budget</p>
-                    <p className="text-[10px] text-orange-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Add Expense/Income */}
-        <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl space-y-4">
-          <div className="flex bg-white/5 rounded-lg p-1">
-            <button onClick={() => setTxType('expense')} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'expense' ? 'bg-[#22C55E] text-black' : 'text-zinc-500'}`}>Expense</button>
-            <button onClick={() => setTxType('income')} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'income' ? 'bg-[#22C55E] text-black' : 'text-zinc-500'}`}>Income</button>
-          </div>
-          
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Amount</p>
-              <div className="flex items-center gap-1">
-                <span className="text-3xl font-bold text-zinc-600">₹</span>
-                <input type="number" value={amount === '0' ? '' : amount} onChange={e => setAmount(e.target.value)} placeholder="0" className="bg-transparent text-3xl font-bold outline-none w-full text-white placeholder-zinc-800" />
-              </div>
-            </div>
-            <div className="w-px bg-white/5 my-1" />
-            <div className="flex-1 relative">
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Category</p>
-              <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} className="flex items-center justify-between w-full p-2 bg-white/5 rounded-xl border border-white/5">
-                <div className="flex items-center gap-2">{getCategoryIcon(selectedCategory.id, selectedCategory.color)}<span className="text-[11px] font-bold text-zinc-300 truncate">{selectedCategory.name}</span></div>
-                <I.ChevDown />
-              </button>
-              <AnimatePresence>
-                {isCategoryOpen && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#151B23] border border-white/10 rounded-2xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar">
-                    {CATEGORIES.map(cat => (
-                      <button key={cat.id} onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} className="flex items-center gap-3 w-full p-3 hover:bg-white/5 text-left border-b border-white/5 last:border-0">
-                        {getCategoryIcon(cat.id, cat.color)}<span className="text-[11px] font-bold text-zinc-300">{cat.name}</span>
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-white/5 rounded-lg text-zinc-500"><I.Note /></div>
-            <input 
-              value={note} 
-              onChange={e => setNote(e.target.value)} 
-              placeholder={selectedCategory.id === 'other' ? "What was this for? (Required)" : "Add note (optional)"} 
-              className={`bg-transparent text-[11px] outline-none w-full transition-colors ${selectedCategory.id === 'other' && !note ? 'text-[#22C55E] placeholder-[#22C55E]/50' : 'text-zinc-400'}`} 
-            />
-            {amount && amount !== '0' && <button onClick={handleSave} className="p-2 bg-[#22C55E] rounded-xl active:scale-95 transition-all text-black"><I.Plus /></button>}
-          </div>
-        </div>
-        
-        <Analysis transactions={transactions} />
-        
-        {/* Recent Logs */}
-        <div className="bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden mb-8">
-          <div className="p-4 flex justify-between items-center border-b border-white/5">
-            <h3 className="text-[11px] font-bold text-zinc-300 uppercase tracking-widest">Recent logs</h3>
-            <button onClick={() => setActiveTab('history')} className="text-[10px] font-bold text-zinc-500">View all</button>
-          </div>
-          <div className="divide-y divide-white/5">
-            {transactions.length === 0 ? <div className="p-8 text-center text-zinc-500 text-[11px] italic">No logs yet.</div> : transactions.slice(0, 5).map(t => {
-              const cat = CATEGORIES.find(c => c.id === t.categoryId) || CATEGORIES[CATEGORIES.length - 1];
-              return (
-                <div key={t.id} className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2.5 rounded-full" style={{ backgroundColor: `${cat.color}22` }}>{getCategoryIcon(cat.id, cat.color)}</div>
-                    <div><p className="text-xs font-bold">{t.note || cat.name}</p><p className="text-[9px] text-zinc-500">{cat.name}</p></div>
-                  </div>
-                  <span className={`text-xs font-bold ${t.type === 'income' ? 'text-[#22C55E]' : ''}`}>
-                    {t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString()}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </main>
-    );
-  };
-
   return (
-    <div className="flex flex-col min-h-screen max-w-md mx-auto relative bg-[#0A0E14] text-white pb-24 overflow-hidden font-sans">
+    <div className="flex flex-col min-h-screen max-w-md md:max-w-2xl mx-auto relative bg-[#0A0E14] text-white pb-24 overflow-hidden font-sans">
       {/* Install Tip Popup */}
       <AnimatePresence>
         {showInstallTip && (
@@ -250,19 +132,9 @@ const Tracker = () => {
                 <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">2.</span><p className="text-sm text-zinc-300">Select <strong>"Add to Home Screen"</strong></p></div>
                 <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">3.</span><p className="text-sm text-zinc-300">Tap <strong>"Add"</strong> — done!</p></div>
               </div>
-              <button onClick={() => setShowInstallTip(false)} className="w-full py-3 bg-[#22C55E] text-black font-black rounded-xl active:scale-95 transition-transform">Got it!</button>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowInstallTip(false)} className="w-full py-3 bg-[#22C55E] text-black font-black rounded-xl transition-transform">Got it!</motion.button>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -100, opacity: 0 }} className="fixed top-6 left-5 right-5 z-[200] bg-[#22C55E] text-black p-4 rounded-2xl shadow-2xl flex items-center gap-4 cursor-pointer" onClick={() => setShowToast(false)}>
-            <div className="p-2 bg-black/10 rounded-xl"><I.Bell /></div>
-            <div><p className="text-[10px] font-black uppercase tracking-widest opacity-60">Payment Detected</p><p className="text-sm font-bold">Log your payment now, {userName}.</p></div>
-          </motion.div>
         )}
       </AnimatePresence>
 
@@ -275,7 +147,7 @@ const Tracker = () => {
             <p className="text-zinc-500 text-sm mb-12">Private by design.</p>
             <div className="w-full max-w-xs space-y-4">
               <input autoFocus value={tempName} onChange={e => setTempName(e.target.value)} placeholder="Enter your name" className="w-full bg-[#151B23] border border-white/5 rounded-2xl p-4 text-xl font-bold outline-none focus:border-[#22C55E]/50 text-white" />
-              <button onClick={handleOnboarding} disabled={!tempName.trim()} className="w-full py-4 bg-[#22C55E] text-black rounded-2xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition-transform">Get Started <I.Right /></button>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={handleOnboarding} disabled={!tempName.trim()} className="w-full py-4 bg-[#22C55E] text-black rounded-2xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 transition-transform">Get Started <I.Right /></motion.button>
             </div>
           </motion.div>
         )}
@@ -286,14 +158,38 @@ const Tracker = () => {
         {isSettingsOpen && (
           <div className="fixed inset-0 z-[160] flex items-end">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsSettingsOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="relative w-full bg-[#151B23] border-t border-white/5 rounded-t-[32px] p-8 pb-12">
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="relative w-full max-h-[85vh] overflow-y-auto no-scrollbar bg-[#151B23] border-t border-white/5 rounded-t-[32px] p-8 pb-12">
               <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8" />
               <div className="flex justify-between items-center mb-8"><h3 className="text-2xl font-bold">Settings</h3><button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button></div>
               <div className="space-y-4">
                 <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-500">User</p><p className="text-sm font-bold">{userName}</p></div><button onClick={() => { setUserName(''); setShowOnboarding(true); setIsSettingsOpen(false); }} className="text-xs font-bold text-[#22C55E]">Edit</button></div>
-                <button onClick={() => { exportData(); setIsSettingsOpen(false); }} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-[#22C55E]/10 rounded-xl text-[#22C55E]"><I.Download /></div><div><p className="text-xs font-bold">Export Data</p><p className="text-[10px] text-zinc-500">Download backup JSON</p></div></button>
-                <button onClick={handleReset} className="w-full p-4 bg-[#0A0E14] border border-red-500/20 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-red-500/10 rounded-xl text-red-500"><I.Trash /></div><div><p className="text-xs font-bold text-red-500">Reset All Logs</p><p className="text-[10px] text-zinc-500">Delete all data</p></div></button>
-                <button onClick={() => window.location.reload()} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-white/5 rounded-xl text-zinc-400"><I.Out /></div><div><p className="text-xs font-bold">Restart</p><p className="text-[10px] text-zinc-500">Clear cache</p></div></button>
+                
+                {/* Budgets UI */}
+                <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl space-y-3">
+                  <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Budgets</h4>
+                  {CATEGORIES.filter(c => c.id !== 'other').map(cat => (
+                    <div key={cat.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-lg" style={{backgroundColor: `${cat.color}20`, color: cat.color}}>{getCategoryIcon(cat.id)}</div>
+                        <p className="text-xs font-bold">{cat.name}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs font-bold text-zinc-500">₹</span>
+                        <input 
+                          type="number" 
+                          value={getBudget(cat.id) || ''}
+                          placeholder="No limit"
+                          onChange={(e) => setBudget(cat.id, e.target.value)}
+                          className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-right w-20 outline-none focus:border-[#22C55E] text-white transition-colors"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <motion.button whileTap={{ scale: 0.98 }} onClick={() => { exportData(); setIsSettingsOpen(false); }} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-[#22C55E]/10 rounded-xl text-[#22C55E]"><I.Download /></div><div><p className="text-xs font-bold">Export Data</p><p className="text-[10px] text-zinc-500">Download backup JSON</p></div></motion.button>
+                <motion.button whileTap={{ scale: 0.98 }} onClick={handleReset} className="w-full p-4 bg-[#0A0E14] border border-red-500/20 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-red-500/10 rounded-xl text-red-500"><I.Trash /></div><div><p className="text-xs font-bold text-red-500">Reset All Logs</p><p className="text-[10px] text-zinc-500">Delete all data</p></div></motion.button>
+                <motion.button whileTap={{ scale: 0.98 }} onClick={() => window.location.reload()} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-white/5 rounded-xl text-zinc-400"><I.Out /></div><div><p className="text-xs font-bold">Restart</p><p className="text-[10px] text-zinc-500">Clear cache</p></div></motion.button>
               </div>
             </motion.div>
           </div>
@@ -308,25 +204,164 @@ const Tracker = () => {
           </div>
           <div className="flex gap-2">
             {stats.currentStreak > 0 && (
-               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500">
+               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500">
                  <I.Flame />
                  <span className="text-[11px] font-bold">{stats.currentStreak} day streak</span>
-               </div>
+               </motion.div>
             )}
-            <button onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Gear /></button>
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400 hover:text-white transition-colors"><I.Gear /></motion.button>
           </div>
         </div>
         <p className="text-[12px] text-zinc-500 font-medium">Hello, {userName}. Private by design.</p>
       </header>
 
-      {renderContent()}
+      <AnimatePresence mode="wait">
+        {activeTab === 'history' && <History key="history" transactions={transactions} deleteTransaction={deleteTransaction} />}
+        {activeTab === 'insights' && <Insights key="insights" transactions={transactions} />}
+        {activeTab === 'home' && (
+          <motion.main key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex-1 px-5 space-y-4 overflow-y-auto no-scrollbar pb-4">
+            <AnimatePresence>
+              {deferredPrompt && (
+                <motion.button initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} whileTap={{ scale: 0.98 }} onClick={handleInstallApp} className="w-full bg-gradient-to-r from-[#22C55E]/10 to-transparent border border-[#22C55E]/20 rounded-2xl p-4 flex items-center justify-between text-left mb-2">
+                  <div>
+                    <h4 className="font-bold text-[#22C55E] text-sm mb-1">Install Ledger</h4>
+                    <p className="text-[10px] text-zinc-400">Add to home screen for faster access</p>
+                  </div>
+                  <div className="px-3 py-1.5 bg-[#22C55E] text-black text-[10px] font-black rounded-lg uppercase tracking-wider">Install</div>
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Earned</p>
+                <h2 className="text-xl font-bold text-[#22C55E]">₹{stats.earnedThisMonth.toLocaleString()}</h2>
+                <p className="text-[10px] text-zinc-500 mt-1">This month</p>
+                <div className="mt-3 flex justify-end"><div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><I.Down /></div></div>
+              </div>
+              <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent</p>
+                <h2 className="text-xl font-bold">₹{stats.spentThisMonth.toLocaleString()}</h2>
+                <p className="text-[10px] text-zinc-500 mt-1">This month</p>
+                <div className="mt-3 flex justify-end"><div className="p-2 bg-orange-500/10 rounded-full text-orange-500"><I.Up /></div></div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl flex justify-between items-start">
+              <div>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Net Balance</p>
+                <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-orange-500' : 'text-white'}`}>
+                  {stats.netThisMonth < 0 ? '-' : ''}₹{Math.abs(stats.netThisMonth).toLocaleString()}
+                </h2>
+              </div>
+              <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#F97316" : "#22C55E"} />
+            </div>
+
+            {/* Budget Warnings */}
+            {warnings.length > 0 && (
+              <div className="space-y-2">
+                {warnings.map(([catId, status]) => {
+                  const cat = CATEGORIES.find(c => c.id === catId);
+                  return (
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} key={catId} className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3">
+                      <div className="text-orange-500"><I.Alert /></div>
+                      <div className="flex-1">
+                        <p className="text-xs font-bold text-orange-500">Warning: {cat?.name} budget</p>
+                        <p className="text-[10px] text-orange-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add Expense/Income */}
+            <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl space-y-4">
+              <div className="flex bg-white/5 rounded-lg p-1 relative">
+                <motion.div 
+                  className="absolute top-1 bottom-1 w-[calc(50%-4px)] bg-[#22C55E] rounded-md"
+                  animate={{ left: txType === 'expense' ? '4px' : 'calc(50%)' }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+                <button onClick={() => setTxType('expense')} className={`relative z-10 flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'expense' ? 'text-black' : 'text-zinc-500'}`}>Expense</button>
+                <button onClick={() => setTxType('income')} className={`relative z-10 flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'income' ? 'text-black' : 'text-zinc-500'}`}>Income</button>
+              </div>
+              
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Amount</p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-3xl font-bold text-zinc-600">₹</span>
+                    <input type="number" value={amount === '0' ? '' : amount} onChange={e => setAmount(e.target.value)} placeholder="0" className="bg-transparent text-3xl font-bold outline-none w-full text-white placeholder-zinc-800" />
+                  </div>
+                </div>
+                <div className="w-px bg-white/5 my-1" />
+                <div className="flex-1 relative">
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Category</p>
+                  <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} className="flex items-center justify-between w-full p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <div className="flex items-center gap-2">{getCategoryIcon(selectedCategory.id, selectedCategory.color)}<span className="text-[11px] font-bold text-zinc-300 truncate">{selectedCategory.name}</span></div>
+                    <I.ChevDown />
+                  </button>
+                  <AnimatePresence>
+                    {isCategoryOpen && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute top-full left-0 right-0 z-50 mt-2 bg-[#151B23] border border-white/10 rounded-2xl shadow-2xl max-h-48 overflow-y-auto no-scrollbar">
+                        {CATEGORIES.map(cat => (
+                          <button key={cat.id} onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} className="flex items-center gap-3 w-full p-3 hover:bg-white/5 text-left border-b border-white/5 last:border-0 transition-colors">
+                            {getCategoryIcon(cat.id, cat.color)}<span className="text-[11px] font-bold text-zinc-300">{cat.name}</span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-white/5 rounded-lg text-zinc-500"><I.Note /></div>
+                <input 
+                  value={note} 
+                  onChange={e => setNote(e.target.value)} 
+                  placeholder={selectedCategory.id === 'other' ? "What was this for? (Required)" : "Add note (optional)"} 
+                  className={`bg-transparent text-[11px] outline-none w-full transition-colors ${selectedCategory.id === 'other' && !note ? 'text-[#22C55E] placeholder-[#22C55E]/50' : 'text-zinc-400'}`} 
+                />
+                {amount && amount !== '0' && <motion.button whileTap={{ scale: 0.9 }} onClick={handleSave} className="p-2 bg-[#22C55E] rounded-xl text-black"><I.Plus /></motion.button>}
+              </div>
+            </div>
+            
+            <Analysis transactions={transactions} />
+            
+            {/* Recent Logs */}
+            <div className="bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden mb-8">
+              <div className="p-4 flex justify-between items-center border-b border-white/5">
+                <h3 className="text-[11px] font-bold text-zinc-300 uppercase tracking-widest">Recent logs</h3>
+                <button onClick={() => setActiveTab('history')} className="text-[10px] font-bold text-zinc-500 hover:text-white transition-colors">View all</button>
+              </div>
+              <div className="divide-y divide-white/5">
+                {transactions.length === 0 ? <div className="p-8 text-center text-zinc-500 text-[11px] italic">No logs yet.</div> : transactions.slice(0, 5).map(t => {
+                  const cat = CATEGORIES.find(c => c.id === t.categoryId) || CATEGORIES[CATEGORIES.length - 1];
+                  return (
+                    <motion.div whileHover={{ backgroundColor: 'rgba(255,255,255,0.02)' }} key={t.id} className="p-4 flex items-center justify-between transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2.5 rounded-full" style={{ backgroundColor: `${cat.color}22` }}>{getCategoryIcon(cat.id, cat.color)}</div>
+                        <div><p className="text-xs font-bold">{t.note || cat.name}</p><p className="text-[9px] text-zinc-500">{cat.name}</p></div>
+                      </div>
+                      <span className={`text-xs font-bold ${t.type === 'income' ? 'text-[#22C55E]' : ''}`}>
+                        {t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString()}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.main>
+        )}
+      </AnimatePresence>
 
       <AIAdvisor isOpen={activeTab === 'coach'} onClose={() => setActiveTab('home')} transactions={transactions} userName={userName} stats={stats} budgetStatuses={budgetStatuses} />
 
       {/* Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-2">
+      <nav className="fixed bottom-0 left-0 right-0 max-w-md md:max-w-2xl mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-2">
         {[['home','Home',<I.Home />],['history','History',<I.Clock />],['coach','Coach',<I.Chat />],['insights','Insights',<I.Bar />]].map(([id,label,icon]) => (
-          <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center gap-1.5 px-4 transition-all ${activeTab === id ? 'text-[#22C55E]' : 'text-zinc-600'}`}>{icon}<span className="text-[10px] font-bold">{label}</span></button>
+          <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center gap-1.5 px-4 transition-all ${activeTab === id ? 'text-[#22C55E]' : 'text-zinc-600 hover:text-zinc-400'}`}>{icon}<span className="text-[10px] font-bold">{label}</span></button>
         ))}
       </nav>
     </div>

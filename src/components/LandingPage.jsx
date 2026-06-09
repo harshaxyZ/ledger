@@ -19,6 +19,7 @@ const S = {
   Home: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
   Bills: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/></svg>,
   Down: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
+  Share: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
 };
 
 const Tile = ({ icon: Icon, title, desc }) => (
@@ -131,6 +132,7 @@ const MockCoach = () => (
 // ─── LANDING PAGE ───────────────────────────────────────────
 const LandingPage = () => {
   const [showDemo, setShowDemo] = useState(false);
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const navigate = useNavigate();
 
@@ -156,13 +158,15 @@ const LandingPage = () => {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
       }
+    } else {
+      setShowInstallInstructions(true);
     }
   };
 
   return (
-    <div className="bg-[#0A0E14] text-white h-screen overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar font-sans">
+    <div className="bg-[#0A0E14] text-white min-h-screen overflow-y-auto scroll-smooth no-scrollbar font-sans">
       {/* 1: Hero */}
-      <section className="h-screen w-full snap-start flex flex-col items-center justify-center relative px-6">
+      <section className="min-h-screen w-full flex flex-col items-center justify-center relative px-6 py-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#22c55e15,transparent_50%)]" />
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="z-10 text-center">
           <div className="flex items-center justify-center mb-6">
@@ -174,21 +178,17 @@ const LandingPage = () => {
             <button onClick={handleTry} className="px-8 py-4 bg-[#22C55E] text-black font-black rounded-2xl flex items-center gap-2 shadow-2xl active:scale-95 transition-transform">Try <span className="underline decoration-2">Ledger</span> <S.Arrow /></button>
             <button onClick={() => setShowDemo(true)} className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2"><span className="text-[#22C55E]"><S.Play /></span> Live Demo</button>
           </div>
-          <AnimatePresence>
-            {deferredPrompt && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex justify-center">
-                <button onClick={handleInstall} className="flex items-center gap-3 px-6 py-3 bg-[#151B23] border border-[#22C55E]/30 rounded-full text-sm font-bold text-[#22C55E] hover:bg-[#22C55E]/10 transition-colors">
-                  <S.Zap /> Install Ledger for faster access
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="flex justify-center mt-6">
+            <button onClick={handleInstall} className="flex items-center gap-3 px-6 py-3 bg-[#151B23] border border-[#22C55E]/30 rounded-full text-sm font-bold text-[#22C55E] hover:bg-[#22C55E]/10 transition-colors">
+              <S.Zap /> Install Ledger for faster access
+            </button>
+          </div>
         </motion.div>
         <div className="absolute bottom-10 opacity-20 animate-bounce"><S.Down /></div>
       </section>
 
       {/* 2: Landscape */}
-      <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24 bg-white/[0.02]">
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24 bg-white/[0.02]">
         <div className="max-w-6xl mx-auto w-full">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block">02 / The Landscape</span>
           <h2 className="text-5xl md:text-7xl font-black mb-12 leading-tight uppercase">Meet the <br /><span className="text-zinc-700">Old Guard.</span></h2>
@@ -200,7 +200,7 @@ const LandingPage = () => {
       </section>
 
       {/* 3: Problem */}
-      <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
         <div className="max-w-6xl mx-auto w-full">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-red-500 mb-4 block">03 / The Problem</span>
           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight uppercase">The <span className="text-red-500">Fatal</span> Flaws.</h2>
@@ -213,14 +213,14 @@ const LandingPage = () => {
       </section>
 
       {/* 4: Turning Point */}
-      <section className="h-screen w-full snap-start flex flex-col items-center justify-center px-6 text-center">
+      <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-20 text-center">
         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-8 block">04 / The Vision</span>
         <h2 className="text-5xl md:text-8xl font-black leading-[0.9] mb-12 uppercase">"Your money <br />is <span className="text-[#22C55E] italic">your</span> business."</h2>
         <p className="text-xl text-zinc-300 font-medium max-w-2xl mx-auto italic">No cloud. No middleman. No compromises.</p>
       </section>
 
       {/* 5: Solution */}
-      <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
         <div className="max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-16 items-center">
           <div className="hidden md:block scale-125"><PhoneMock title="Home" desc="Quick overview of your spending."><MockHome /></PhoneMock></div>
           <div>
@@ -228,7 +228,7 @@ const LandingPage = () => {
             <h2 className="text-6xl font-black mb-8 uppercase">Ledger.</h2>
             <p className="text-xl text-zinc-300 font-medium mb-8">A powerful tool that puts your <span className="text-[#22C55E]">entire finance</span> in your pocket.</p>
             <ul className="space-y-4">
-              {['100% Offline Processing', 'AES-256 Local Encryption', 'Zero Data Harvesting'].map(t => (
+              {['100% Offline Processing', 'Your Data Never Leaves Your Device', 'Zero Data Harvesting'].map(t => (
                 <li key={t} className="flex items-center gap-3 font-bold text-sm text-zinc-400"><div className="w-5 h-5 bg-[#22C55E]/20 rounded-full flex items-center justify-center text-[#22C55E]"><S.Check /></div><span className="group-hover:text-white transition-colors">{t}</span></li>
               ))}
             </ul>
@@ -237,7 +237,7 @@ const LandingPage = () => {
       </section>
 
       {/* 6: Comparison */}
-      <section className="h-screen w-full snap-start flex flex-col justify-center px-6 md:px-24">
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
         <div className="max-w-5xl mx-auto w-full">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-8 block text-center">06 / Market Edge</span>
           <h2 className="text-5xl font-black mb-16 text-center uppercase">Ledger <span className="text-zinc-700">vs</span> The Rest.</h2>
@@ -246,7 +246,7 @@ const LandingPage = () => {
               <thead><tr className="bg-white/5"><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-400">Feature</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-[#22C55E]">Ledger</th><th className="p-4 md:p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Others</th></tr></thead>
               <tbody className="divide-y divide-white/5">
                 <Row title="Data Ownership" ledger="100% User Owned" other="Corporate Servers" />
-                <Row title="Security" ledger="AES-256 Encryption" other="Public Cloud" />
+                <Row title="Security" ledger="Local Storage Only" other="Public Cloud" />
                 <Row title="Internet" ledger="Offline-First" other="Needs Connectivity" />
                 <Row title="Privacy" ledger="Zero Harvesting" other="Data For Sale" />
               </tbody>
@@ -256,7 +256,7 @@ const LandingPage = () => {
       </section>
 
       {/* 7: App Preview — 4 Screenshots */}
-      <section className="min-h-screen w-full snap-start flex flex-col justify-center px-6 py-16 md:px-24">
+      <section className="min-h-screen w-full flex flex-col justify-center px-6 py-20 md:px-24">
         <div className="max-w-6xl mx-auto w-full">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-4 block text-center">07 / Inside The App</span>
           <h2 className="text-5xl font-black mb-4 text-center uppercase">See It In <span className="text-[#22C55E]">Action.</span></h2>
@@ -271,23 +271,47 @@ const LandingPage = () => {
       </section>
 
       {/* 8: CTA */}
-      <section className="h-screen w-full snap-start flex flex-col items-center justify-center px-6 relative">
+      <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-20 relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,#22c55e15,transparent_50%)]" />
         <div className="text-center z-10">
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#22C55E] mb-12 block">08 / Try It</span>
           <h2 className="text-6xl md:text-9xl font-black mb-12 uppercase leading-none">Your <span className="text-[#22C55E]">Money</span>,<br />Your Data.</h2>
           <p className="text-zinc-300 mb-16 max-w-lg mx-auto text-lg font-medium italic">Join the <span className="text-[#22C55E]">privacy revolution</span>. 100% Free. No setup required.</p>
-          <button onClick={handleTry} className="px-12 py-6 bg-white text-black font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E] transition-all active:scale-95 shadow-2xl mx-auto"><S.Phone /> Launch App</button>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <button onClick={handleTry} className="px-12 py-6 bg-white text-black font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E] transition-all active:scale-95 shadow-2xl"><S.Phone /> Launch App</button>
+            <button onClick={handleInstall} className="px-12 py-6 bg-[#151B23] border border-[#22C55E]/30 text-[#22C55E] font-black rounded-3xl flex items-center gap-3 text-xl hover:bg-[#22C55E]/10 transition-all active:scale-95 shadow-2xl"><S.Zap /> Install App</button>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/5 px-6 bg-[#0A0E14] snap-start">
+      <footer className="py-12 border-t border-white/5 px-6 bg-[#0A0E14]">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2"><span className="text-[#22C55E]"><S.Logo /></span><span className="font-bold uppercase tracking-tighter">Ledger</span></div>
           <p className="text-zinc-500 text-xs italic">Private. Secure. Yours.</p>
         </div>
       </footer>
+
+      {/* Install Instructions Modal */}
+      <AnimatePresence>
+        {showInstallInstructions && (
+          <div className="fixed inset-0 z-[250] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowInstallInstructions(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-[#151B23] border border-white/10 rounded-[2rem] p-8 max-w-sm w-full text-center">
+              <button onClick={() => setShowInstallInstructions(false)} className="absolute top-4 right-4 text-zinc-500"><S.X /></button>
+              <div className="p-4 bg-[#22C55E]/10 rounded-2xl w-fit mx-auto mb-6 text-[#22C55E]"><S.Share /></div>
+              <h3 className="text-xl font-black mb-3 uppercase tracking-tight">Add to Home Screen</h3>
+              <p className="text-zinc-400 text-sm mb-6 leading-relaxed">To install Ledger as an app:</p>
+              <div className="text-left space-y-3 mb-6">
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">1.</span><p className="text-sm text-zinc-300">Tap the <strong>Share</strong> or <strong>⋮</strong> menu button</p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">2.</span><p className="text-sm text-zinc-300">Select <strong>"Add to Home Screen"</strong></p></div>
+                <div className="flex gap-3 items-start"><span className="text-[#22C55E] font-black text-sm">3.</span><p className="text-sm text-zinc-300">Tap <strong>"Add"</strong> — done!</p></div>
+              </div>
+              <button onClick={() => setShowInstallInstructions(false)} className="w-full py-3 bg-[#22C55E] text-black font-black rounded-xl active:scale-95 transition-transform">Got it!</button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Demo Modal */}
       <AnimatePresence>
