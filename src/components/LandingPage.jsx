@@ -143,7 +143,6 @@ const LandingPage = () => {
   }, [navigate]);
 
   const handleTry = () => {
-    // Clear ALL kuber keys to force fresh demo data
     Object.keys(localStorage).forEach(key => {
       if (key.startsWith('kuber_')) localStorage.removeItem(key);
     });

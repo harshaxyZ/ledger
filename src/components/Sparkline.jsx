@@ -1,14 +1,8 @@
 import React from 'react';
 
 const Sparkline = ({ data, color = "#22C55E" }) => {
-  // If all zeros, show a subtle "No data" message instead
-  const allZero = data.every(v => v === 0);
-  if (allZero) {
-    return (
-      <div className="flex items-center justify-end h-10">
-        <span className="text-[10px] text-zinc-600 font-medium">No recent data</span>
-      </div>
-    );
+  if (data.every(v => v === 0)) {
+    return <span className="text-[10px] text-zinc-600">No data yet</span>;
   }
 
   // Simple SVG sparkline generator

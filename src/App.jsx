@@ -63,9 +63,9 @@ const Tracker = () => {
   }, []);
 
   useEffect(() => {
-    if (searchParams.get('trial') === 'true' && !sessionStorage.getItem('install_tip_shown')) {
+    if (searchParams.get('trial') === 'true' && !sessionStorage.getItem('tip_shown')) {
       setShowInstallTip(true);
-      sessionStorage.setItem('install_tip_shown', 'true');
+      sessionStorage.setItem('tip_shown', 'true');
     }
   }, [searchParams]);
 

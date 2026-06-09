@@ -63,11 +63,8 @@ export const useTransactions = () => {
   const clearAllData = () => {
     setTransactions([]);
     setUserName('');
-    // Remove all Ledger-related keys
     Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('kuber_')) {
-        localStorage.removeItem(key);
-      }
+      if (key.startsWith('kuber_')) localStorage.removeItem(key);
     });
   };
 
