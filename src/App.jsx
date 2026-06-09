@@ -160,7 +160,13 @@ const Tracker = () => {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsSettingsOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="relative w-full max-h-[85vh] overflow-y-auto no-scrollbar bg-[#151B23] border-t border-white/5 rounded-t-[32px] p-8 pb-12">
               <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8" />
-              <div className="flex justify-between items-center mb-8"><h3 className="text-2xl font-bold">Settings</h3><button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button></div>
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-bold">Settings</h3>
+                <div className="flex items-center gap-4">
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">v6.7</span>
+                  <button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button>
+                </div>
+              </div>
               <div className="space-y-4">
                 <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-500">User</p><p className="text-sm font-bold">{userName}</p></div><button onClick={() => { setUserName(''); setShowOnboarding(true); setIsSettingsOpen(false); }} className="text-xs font-bold text-[#22C55E]">Edit</button></div>
                 
