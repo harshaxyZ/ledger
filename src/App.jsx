@@ -31,49 +31,57 @@ const I = {
   Note: () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
   Out: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
   Share: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>,
+  Download: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+  Flame: () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
+  Alert: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 };
 
 const Tracker = () => {
-  const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats } = useTransactions();
+  const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats, getBudgetStatuses, exportData } = useTransactions();
   const [activeTab, setActiveTab] = useState('home');
   const [showOnboarding, setShowOnboarding] = useState(!userName);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempName, setTempName] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showInstallTip, setShowInstallTip] = useState(false);
+  
+  const [txType, setTxType] = useState('expense');
   const [amount, setAmount] = useState('0');
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
   const [note, setNote] = useState('');
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  
   const [searchParams] = useSearchParams();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const { spentToday, transactionsToday, monthlySpent, dailyAverage } = getStats();
+
+  const stats = getStats();
+  const budgetStatuses = getBudgetStatuses();
 
   useEffect(() => {
-    const h = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
+    const h = (e) => { e.preventDefault(); setDeferredPrompt(e); };
     window.addEventListener('beforeinstallprompt', h);
     return () => window.removeEventListener('beforeinstallprompt', h);
   }, []);
 
   useEffect(() => {
-    if (searchParams.get('trial') === 'true') {
-      setShowInstallTip(true);
-    }
-  }, []);
+    if (searchParams.get('trial') === 'true') setShowInstallTip(true);
+  }, [searchParams]);
 
   const handleSave = () => { 
     if (!amount || amount === '0') return; 
     if (selectedCategory.id === 'other' && !note.trim()) {
-      alert("Please specify what this expense was for in the note field.");
+      alert("Please specify what this was for in the note field.");
       return;
     }
-    addTransaction(amount, selectedCategory.id, note); 
-    setAmount('0'); 
-    setNote(''); 
+    try {
+      addTransaction(amount, txType, selectedCategory.id, note); 
+      setAmount('0'); 
+      setNote('');
+    } catch (e) {
+      alert(e.message);
+    }
   };
+
   const handleOnboarding = () => { if (tempName.trim()) { setUserName(tempName.trim()); setShowOnboarding(false); if ("Notification" in window) Notification.requestPermission(); } };
   const simulateNotif = () => { setShowToast(true); setTimeout(() => setShowToast(false), 5000); };
   const handleReset = () => { if (window.confirm("Clear all logs?")) { clearAllData(); setIsSettingsOpen(false); } };
@@ -83,11 +91,11 @@ const Tracker = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-      }
+      if (outcome === 'accepted') setDeferredPrompt(null);
     }
   };
+
+  const warnings = Object.entries(budgetStatuses).filter(([_, status]) => status && status.isWarning);
 
   // Render active tab content
   const renderContent = () => {
@@ -105,32 +113,60 @@ const Tracker = () => {
             <div className="px-3 py-1.5 bg-[#22C55E] text-black text-[10px] font-black rounded-lg uppercase tracking-wider">Install</div>
           </button>
         )}
+
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent today</p>
-            <h2 className="text-xl font-bold text-[#22C55E]">₹{spentToday.toLocaleString()}</h2>
-            <p className="text-[10px] text-zinc-500 mt-1">{transactionsToday} logs</p>
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Earned</p>
+            <h2 className="text-xl font-bold text-[#22C55E]">₹{stats.earnedThisMonth.toLocaleString()}</h2>
+            <p className="text-[10px] text-zinc-500 mt-1">This month</p>
             <div className="mt-3 flex justify-end"><div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><I.Down /></div></div>
           </div>
           <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Monthly spent</p>
-            <h2 className="text-xl font-bold">₹{monthlySpent.toLocaleString()}</h2>
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent</p>
+            <h2 className="text-xl font-bold">₹{stats.spentThisMonth.toLocaleString()}</h2>
             <p className="text-[10px] text-zinc-500 mt-1">This month</p>
             <div className="mt-3 flex justify-end"><div className="p-2 bg-orange-500/10 rounded-full text-orange-500"><I.Up /></div></div>
           </div>
         </div>
+        
         <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl flex justify-between items-start">
           <div>
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Daily average</p>
-            <h2 className="text-2xl font-bold">₹{Math.round(dailyAverage).toLocaleString()}</h2>
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Net Balance</p>
+            <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-orange-500' : 'text-white'}`}>
+              {stats.netThisMonth < 0 ? '-' : ''}₹{Math.abs(stats.netThisMonth).toLocaleString()}
+            </h2>
           </div>
-          <Sparkline data={trendData} color="#22C55E" />
+          <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#F97316" : "#22C55E"} />
         </div>
-        {/* Add Expense */}
+
+        {/* Budget Warnings */}
+        {warnings.length > 0 && (
+          <div className="space-y-2">
+            {warnings.map(([catId, status]) => {
+              const cat = CATEGORIES.find(c => c.id === catId);
+              return (
+                <div key={catId} className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3">
+                  <div className="text-orange-500"><I.Alert /></div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-orange-500">Warning: {cat?.name} budget</p>
+                    <p className="text-[10px] text-orange-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Add Expense/Income */}
         <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl space-y-4">
+          <div className="flex bg-white/5 rounded-lg p-1">
+            <button onClick={() => setTxType('expense')} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'expense' ? 'bg-[#22C55E] text-black' : 'text-zinc-500'}`}>Expense</button>
+            <button onClick={() => setTxType('income')} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${txType === 'income' ? 'bg-[#22C55E] text-black' : 'text-zinc-500'}`}>Income</button>
+          </div>
+          
           <div className="flex gap-4">
             <div className="flex-1">
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Add expense</p>
+              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-2">Amount</p>
               <div className="flex items-center gap-1">
                 <span className="text-3xl font-bold text-zinc-600">₹</span>
                 <input type="number" value={amount === '0' ? '' : amount} onChange={e => setAmount(e.target.value)} placeholder="0" className="bg-transparent text-3xl font-bold outline-none w-full text-white placeholder-zinc-800" />
@@ -167,7 +203,9 @@ const Tracker = () => {
             {amount && amount !== '0' && <button onClick={handleSave} className="p-2 bg-[#22C55E] rounded-xl active:scale-95 transition-all text-black"><I.Plus /></button>}
           </div>
         </div>
+        
         <Analysis transactions={transactions} />
+        
         {/* Recent Logs */}
         <div className="bg-[#151B23] border border-white/5 rounded-2xl overflow-hidden mb-8">
           <div className="p-4 flex justify-between items-center border-b border-white/5">
@@ -183,7 +221,9 @@ const Tracker = () => {
                     <div className="p-2.5 rounded-full" style={{ backgroundColor: `${cat.color}22` }}>{getCategoryIcon(cat.id, cat.color)}</div>
                     <div><p className="text-xs font-bold">{t.note || cat.name}</p><p className="text-[9px] text-zinc-500">{cat.name}</p></div>
                   </div>
-                  <span className="text-xs font-bold">₹{t.amount.toLocaleString()}</span>
+                  <span className={`text-xs font-bold ${t.type === 'income' ? 'text-[#22C55E]' : ''}`}>
+                    {t.type === 'income' ? '+' : ''}₹{t.amount.toLocaleString()}
+                  </span>
                 </div>
               );
             })}
@@ -251,6 +291,7 @@ const Tracker = () => {
               <div className="flex justify-between items-center mb-8"><h3 className="text-2xl font-bold">Settings</h3><button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button></div>
               <div className="space-y-4">
                 <div className="p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center justify-between"><div><p className="text-xs font-bold text-zinc-500">User</p><p className="text-sm font-bold">{userName}</p></div><button onClick={() => { setUserName(''); setShowOnboarding(true); setIsSettingsOpen(false); }} className="text-xs font-bold text-[#22C55E]">Edit</button></div>
+                <button onClick={() => { exportData(); setIsSettingsOpen(false); }} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-[#22C55E]/10 rounded-xl text-[#22C55E]"><I.Download /></div><div><p className="text-xs font-bold">Export Data</p><p className="text-[10px] text-zinc-500">Download backup JSON</p></div></button>
                 <button onClick={handleReset} className="w-full p-4 bg-[#0A0E14] border border-red-500/20 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-red-500/10 rounded-xl text-red-500"><I.Trash /></div><div><p className="text-xs font-bold text-red-500">Reset All Logs</p><p className="text-[10px] text-zinc-500">Delete all data</p></div></button>
                 <button onClick={() => window.location.reload()} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-white/5 rounded-xl text-zinc-400"><I.Out /></div><div><p className="text-xs font-bold">Restart</p><p className="text-[10px] text-zinc-500">Clear cache</p></div></button>
               </div>
@@ -262,9 +303,16 @@ const Tracker = () => {
       {/* Header */}
       <header className="px-6 pt-10 pb-6 shrink-0">
         <div className="flex justify-between items-start mb-1">
-          <div className="flex items-center gap-2"><h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1></div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-extrabold tracking-tight">Ledger</h1>
+          </div>
           <div className="flex gap-2">
-            <button onClick={simulateNotif} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Bell /></button>
+            {stats.currentStreak > 0 && (
+               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500">
+                 <I.Flame />
+                 <span className="text-[11px] font-bold">{stats.currentStreak} day streak</span>
+               </div>
+            )}
             <button onClick={() => setIsSettingsOpen(true)} className="p-2.5 bg-white/5 rounded-full border border-white/5 text-zinc-400"><I.Gear /></button>
           </div>
         </div>
@@ -273,7 +321,7 @@ const Tracker = () => {
 
       {renderContent()}
 
-      <AIAdvisor isOpen={activeTab === 'coach'} onClose={() => setActiveTab('home')} transactions={transactions} userName={userName} />
+      <AIAdvisor isOpen={activeTab === 'coach'} onClose={() => setActiveTab('home')} transactions={transactions} userName={userName} stats={stats} budgetStatuses={budgetStatuses} />
 
       {/* Nav */}
       <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-2">

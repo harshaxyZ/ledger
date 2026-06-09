@@ -8,7 +8,7 @@ const XIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
 const SendIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>;
 const UserIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>;
 
-const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
+const AIAdvisor = ({ isOpen, onClose, transactions, userName, stats, budgetStatuses }) => {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,18 +29,25 @@ const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
   }, [messages, isLoading]);
 
   const getSpendingContext = () => {
-    const summary = transactions.reduce((acc, t) => {
-      const cat = CATEGORIES.find(c => c.id === t.categoryId)?.name || 'Other';
-      acc[cat] = (acc[cat] || 0) + t.amount;
-      return acc;
-    }, {});
+    if (!stats || transactions.length === 0) return "No transactions logged yet.";
+
+    const recent = transactions.slice(0, 3).map(t => `${t.note || 'No note'} (₹${t.amount})`).join(', ');
     
-    const total = transactions.reduce((sum, t) => sum + t.amount, 0);
-    const context = Object.entries(summary)
-      .map(([cat, amt]) => `${cat}: ₹${amt}`)
-      .join(', ');
-      
-    return `Total Spent: ₹${total}. Breakdown: ${context || 'No transactions logged yet.'}`;
+    const alerts = budgetStatuses ? Object.entries(budgetStatuses)
+      .filter(([_, status]) => status && status.isWarning)
+      .map(([catId, status]) => {
+        const cat = CATEGORIES.find(c => c.id === catId);
+        return `${cat?.name || catId} at ${Math.round(status.percentUsed)}%`;
+      }).join(', ') : '';
+
+    const topExp = stats.topExpenseCategory ? `${stats.topExpenseCategory.name} ₹${stats.topExpenseCategory.amount}` : 'None';
+
+    return `User: ${userName}
+This Month: Income ₹${stats.earnedThisMonth}, Spent ₹${stats.spentThisMonth}, Net ₹${stats.netThisMonth}
+Top Expense: ${topExp}
+Daily Average: ₹${Math.round(stats.dailyAverageSpend)}
+Budget Alerts: ${alerts || 'None'}
+Recent: ${recent}`;
   };
 
   const handleSend = async () => {
@@ -49,6 +56,12 @@ const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
     const userMessage = { role: 'user', content: query };
     setMessages(prev => [...prev, userMessage]);
     setQuery('');
+    
+    if (transactions.length === 0) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "You haven't logged any transactions yet. Add some income or expenses so I can give you advice!" }]);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -59,7 +72,7 @@ const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
         YOUR MISSION: Help the user understand their spending and save money.
         RELEVANCY RULE: 
         - Questions about spending, budget, "recap my day", "summary", savings, or financial habits are HIGHLY RELEVANT. Answer them directly with alpha-level advice.
-        - Only decline questions that are completely unrelated to life or finance (e.g. "what is the weather", "write a python script", "tell me a joke").
+        - Only decline questions that are completely unrelated to life or finance.
         
         CURRENT USER DATA:
         ${context}
@@ -90,7 +103,10 @@ const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
       
       setMessages(prev => [...prev, { role: 'assistant', content: advice }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Coach is offline. Check your internet or API key!" }]);
+      // Offline fallback
+      const topExpName = stats?.topExpenseCategory?.name || 'various things';
+      const fallbackMsg = `I seem to be offline. However, I can see you spent ₹${stats?.spentThisMonth || 0} this month. Your biggest expense is ${topExpName}.`;
+      setMessages(prev => [...prev, { role: 'assistant', content: fallbackMsg }]);
     } finally {
       setIsLoading(false);
     }
@@ -163,7 +179,7 @@ const AIAdvisor = ({ isOpen, onClose, transactions, userName }) => {
 
             <div className="mt-auto pb-8 pt-4">
                <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
-                {["My biggest spend?", "How to save ₹2k?", "Recap my day"].map((s, i) => (
+                {["Recap my month", "How to save ₹2000?", "Where am I overspending?"].map((s, i) => (
                   <button 
                     key={i}
                     onClick={() => { setQuery(s); }}

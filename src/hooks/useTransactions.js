@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useBudgets } from './useBudgets';
+import { validateAmount, validateNote, validateCategory } from '../utils/validate';
+import { CATEGORIES } from '../constants/categories';
 
 export const useTransactions = () => {
+  const { getBudgetStatus, budgets } = useBudgets();
+
   const [userName, setUserName] = useState(() => {
     return localStorage.getItem('kuber_user_name') || '';
   });
 
   const [transactions, setTransactions] = useState(() => {
     const saved = localStorage.getItem('kuber_transactions');
-    if (saved) return JSON.parse(saved);
-    
-    // Start with 0 logs as requested for testing
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.map(t => ({ ...t, type: t.type || 'expense' }));
+    }
     return [];
   });
 
@@ -23,14 +29,30 @@ export const useTransactions = () => {
     }
   }, [userName]);
 
-  const addTransaction = (amount, categoryId, note = '') => {
+  const addTransaction = (amount, type, categoryId, note = '') => {
+    const amountVal = validateAmount(amount);
+    if (!amountVal.valid) throw new Error(amountVal.error);
+
+    const typeValid = type === 'income' || type === 'expense';
+    if (!typeValid) throw new Error('Type must be income or expense');
+
+    const catVal = validateCategory(categoryId);
+    if (!catVal.valid) throw new Error(catVal.error);
+
+    if (note) {
+      const noteVal = validateNote(note);
+      if (!noteVal.valid) throw new Error(noteVal.error);
+    }
+
     const newTransaction = {
       id: Date.now().toString(),
       amount: parseFloat(amount),
+      type,
       categoryId,
       note: note || '',
       date: new Date().toISOString(),
     };
+    
     setTransactions(prev => [newTransaction, ...prev]);
   };
 
@@ -40,31 +62,120 @@ export const useTransactions = () => {
 
   const clearAllData = () => {
     setTransactions([]);
-    // localStorage.removeItem('kuber_transactions'); // Optionally keep other settings
+    localStorage.removeItem('kuber_budgets');
   };
 
   const getStats = () => {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     
-    const spentToday = transactions
-      .filter(t => new Date(t.date).getTime() >= today)
-      .reduce((sum, t) => sum + t.amount, 0);
+    let spentToday = 0, earnedToday = 0;
+    let spentThisMonth = 0, earnedThisMonth = 0;
 
-    const transactionsToday = transactions.filter(t => new Date(t.date).getTime() >= today).length;
+    const categoryTotals = {};
+    const daysLogged = new Set();
 
-    const monthlySpent = transactions
-      .filter(t => {
-        const d = new Date(t.date);
-        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-      })
-      .reduce((sum, t) => sum + t.amount, 0);
+    transactions.forEach(t => {
+      const d = new Date(t.date);
+      const tTime = d.getTime();
+      const tDateStr = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      daysLogged.add(tDateStr);
 
-    // Simple daily average calculation
-    const daysInMonth = now.getDate();
-    const dailyAverage = monthlySpent / daysInMonth || 0;
+      if (tTime >= todayStart) {
+        if (t.type === 'expense') spentToday += t.amount;
+        else if (t.type === 'income') earnedToday += t.amount;
+      }
 
-    return { spentToday, transactionsToday, monthlySpent, dailyAverage };
+      if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+        if (t.type === 'expense') {
+          spentThisMonth += t.amount;
+          categoryTotals[t.categoryId] = (categoryTotals[t.categoryId] || 0) + t.amount;
+        } else if (t.type === 'income') {
+          earnedThisMonth += t.amount;
+        }
+      }
+    });
+
+    const netToday = earnedToday - spentToday;
+    const netThisMonth = earnedThisMonth - spentThisMonth;
+    const dailyAverageSpend = spentThisMonth / (now.getDate()) || 0;
+
+    let topExpenseCategory = null;
+    let maxSpend = 0;
+    Object.entries(categoryTotals).forEach(([catId, amount]) => {
+      if (amount > maxSpend) {
+        maxSpend = amount;
+        const cat = CATEGORIES.find(c => c.id === catId);
+        topExpenseCategory = { name: cat ? cat.name : catId, amount };
+      }
+    });
+
+    const dates = Array.from(daysLogged).sort((a, b) => b - a);
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+    
+    let checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    
+    if (dates.length > 0) {
+      if (dates[0] === checkDate || dates[0] === checkDate - 86400000) {
+        let expected = dates[0];
+        for (let i = 0; i < dates.length; i++) {
+          if (dates[i] === expected) {
+            currentStreak++;
+            expected -= 86400000;
+          } else {
+            break;
+          }
+        }
+      }
+
+      tempStreak = 1;
+      longestStreak = 1;
+      for (let i = 0; i < dates.length - 1; i++) {
+        const diff = dates[i] - dates[i+1];
+        if (diff === 86400000) {
+          tempStreak++;
+          longestStreak = Math.max(longestStreak, tempStreak);
+        } else {
+          tempStreak = 1;
+        }
+      }
+    }
+    
+    return {
+      spentToday, earnedToday, netToday,
+      spentThisMonth, earnedThisMonth, netThisMonth,
+      dailyAverageSpend,
+      currentStreak, longestStreak,
+      topExpenseCategory
+    };
+  };
+
+  const getBudgetStatuses = () => {
+    const now = new Date();
+    const statuses = {};
+    Object.keys(budgets).forEach(catId => {
+      statuses[catId] = getBudgetStatus(catId, now.getMonth(), now.getFullYear(), transactions);
+    });
+    return statuses;
+  };
+
+  const exportData = () => {
+    const data = {
+      app: "Ledger",
+      version: "2.0.0",
+      exportedAt: new Date().toISOString(),
+      transactions,
+      budgets
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ledger-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return {
@@ -74,6 +185,8 @@ export const useTransactions = () => {
     addTransaction,
     deleteTransaction,
     clearAllData,
-    getStats
+    getStats,
+    getBudgetStatuses,
+    exportData
   };
 };
