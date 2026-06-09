@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CATEGORIES } from './constants/categories';
 import { getCategoryIcon } from './constants/categoryIcons';
 import { useTransactions } from './hooks/useTransactions';
-import { useBudgets } from './hooks/useBudgets';
 import Analysis from './components/Analysis';
 import AIAdvisor from './components/AIAdvisor';
 import Sparkline from './components/Sparkline';
@@ -38,8 +37,7 @@ const I = {
 };
 
 const Tracker = () => {
-  const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats, getBudgetStatuses, exportData } = useTransactions();
-  const { setBudget, getBudget } = useBudgets();
+  const { transactions, userName, setUserName, addTransaction, deleteTransaction, clearAllData, getStats, getBudgetStatuses, exportData, setBudget, getBudget } = useTransactions();
   const [activeTab, setActiveTab] = useState('home');
   const [showOnboarding, setShowOnboarding] = useState(!userName);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -65,7 +63,10 @@ const Tracker = () => {
   }, []);
 
   useEffect(() => {
-    if (searchParams.get('trial') === 'true') setShowInstallTip(true);
+    if (searchParams.get('trial') === 'true' && !sessionStorage.getItem('install_tip_shown')) {
+      setShowInstallTip(true);
+      sessionStorage.setItem('install_tip_shown', 'true');
+    }
   }, [searchParams]);
 
   const handleSave = () => { 
@@ -424,7 +425,14 @@ const PWABadges = () => {
 };
 
 const App = () => {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  const [isStandalone, setIsStandalone] = useState(false);
+  
+  useEffect(() => {
+    setIsStandalone(
+      window.matchMedia('(display-mode: standalone)').matches || 
+      window.navigator.standalone === true
+    );
+  }, []);
   
   return (
     <Router>

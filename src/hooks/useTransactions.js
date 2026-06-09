@@ -4,7 +4,7 @@ import { validateAmount, validateNote, validateCategory } from '../utils/validat
 import { CATEGORIES } from '../constants/categories';
 
 export const useTransactions = () => {
-  const { getBudgetStatus, budgets } = useBudgets();
+  const { getBudgetStatus, budgets, setBudget, getBudget } = useBudgets();
 
   const [userName, setUserName] = useState(() => {
     return localStorage.getItem('kuber_user_name') || '';
@@ -62,7 +62,13 @@ export const useTransactions = () => {
 
   const clearAllData = () => {
     setTransactions([]);
-    localStorage.removeItem('kuber_budgets');
+    setUserName('');
+    // Remove all Ledger-related keys
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('kuber_')) {
+        localStorage.removeItem(key);
+      }
+    });
   };
 
   const getStats = () => {
@@ -187,6 +193,8 @@ export const useTransactions = () => {
     clearAllData,
     getStats,
     getBudgetStatuses,
-    exportData
+    exportData,
+    setBudget,
+    getBudget
   };
 };

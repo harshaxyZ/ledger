@@ -143,7 +143,10 @@ const LandingPage = () => {
   }, [navigate]);
 
   const handleTry = () => {
-    localStorage.removeItem('ledger_transactions');
+    // Clear ALL kuber keys to force fresh demo data
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('kuber_')) localStorage.removeItem(key);
+    });
     navigate('/app?trial=true');
   };
 

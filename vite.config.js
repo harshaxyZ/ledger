@@ -11,6 +11,7 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['logo.png', 'favicon.svg', 'icon-192x192.png', 'icon-512x512.png', 'icon-maskable-512x512.png'],
       manifest: {
+        scope: '/',
         name: 'Ledger',
         short_name: 'Ledger',
         start_url: '/',
