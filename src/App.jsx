@@ -44,7 +44,6 @@ const Tracker = () => {
   const [showOnboarding, setShowOnboarding] = useState(!userName);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [tempName, setTempName] = useState('');
-  const [showToast, setShowToast] = useState(false);
   const [showInstallTip, setShowInstallTip] = useState(false);
   
   const [txType, setTxType] = useState('expense');
@@ -210,7 +209,7 @@ const Tracker = () => {
           </div>
           <div className="flex gap-2">
             {stats.currentStreak > 0 && (
-               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-500">
+               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-500">
                  <I.Flame />
                  <span className="text-[11px] font-bold">{stats.currentStreak} day streak</span>
                </motion.div>
@@ -249,18 +248,18 @@ const Tracker = () => {
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Spent</p>
                 <h2 className="text-xl font-bold">₹{stats.spentThisMonth.toLocaleString()}</h2>
                 <p className="text-[10px] text-zinc-500 mt-1">This month</p>
-                <div className="mt-3 flex justify-end"><div className="p-2 bg-orange-500/10 rounded-full text-orange-500"><I.Up /></div></div>
+                <div className="mt-3 flex justify-end"><div className="p-2 bg-red-500/10 rounded-full text-red-500"><I.Up /></div></div>
               </div>
             </div>
             
             <div className="p-4 bg-[#151B23] border border-white/5 rounded-2xl flex justify-between items-start">
               <div>
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider mb-1">Net Balance</p>
-                <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-orange-500' : 'text-white'}`}>
+                <h2 className={`text-2xl font-bold ${stats.netThisMonth < 0 ? 'text-red-500' : 'text-white'}`}>
                   {stats.netThisMonth < 0 ? '-' : ''}₹{Math.abs(stats.netThisMonth).toLocaleString()}
                 </h2>
               </div>
-              <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#F97316" : "#22C55E"} />
+              <Sparkline data={trendData} color={stats.netThisMonth < 0 ? "#EF4444" : "#22C55E"} />
             </div>
 
             {/* Budget Warnings */}
@@ -269,11 +268,11 @@ const Tracker = () => {
                 {warnings.map(([catId, status]) => {
                   const cat = CATEGORIES.find(c => c.id === catId);
                   return (
-                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} key={catId} className="p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex items-center gap-3">
-                      <div className="text-orange-500"><I.Alert /></div>
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} key={catId} className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3">
+                      <div className="text-red-500"><I.Alert /></div>
                       <div className="flex-1">
-                        <p className="text-xs font-bold text-orange-500">Warning: {cat?.name} budget</p>
-                        <p className="text-[10px] text-orange-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
+                        <p className="text-xs font-bold text-red-500">Warning: {cat?.name} budget</p>
+                        <p className="text-[10px] text-red-500/80">You've used {Math.round(status.percentUsed)}% of your ₹{status.limit} limit.</p>
                       </div>
                     </motion.div>
                   );
@@ -365,7 +364,7 @@ const Tracker = () => {
       <AIAdvisor isOpen={activeTab === 'coach'} onClose={() => setActiveTab('home')} transactions={transactions} userName={userName} stats={stats} budgetStatuses={budgetStatuses} />
 
       {/* Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md md:max-w-2xl mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-2">
+      <nav className="fixed bottom-0 left-0 right-0 max-w-md md:max-w-2xl mx-auto bg-[#0A0E14]/80 backdrop-blur-2xl border-t border-white/5 flex items-center justify-around h-20 px-4 z-50 pb-safe pb-2">
         {[['home','Home',<I.Home />],['history','History',<I.Clock />],['coach','Coach',<I.Chat />],['insights','Insights',<I.Bar />]].map(([id,label,icon]) => (
           <button key={id} onClick={() => setActiveTab(id)} className={`flex flex-col items-center gap-1.5 px-4 transition-all ${activeTab === id ? 'text-[#22C55E]' : 'text-zinc-600 hover:text-zinc-400'}`}>{icon}<span className="text-[10px] font-bold">{label}</span></button>
         ))}
@@ -408,7 +407,7 @@ const PWABadges = () => {
 
       <AnimatePresence>
         {needRefresh && (
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="fixed bottom-24 left-5 right-5 z-[300] bg-[#151B23] border border-[#22C55E]/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between">
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} className="fixed bottom-24 left-5 right-5 z-[300] bg-[#151B23] border border-[#22C55E]/30 p-4 rounded-2xl shadow-2xl flex items-center justify-between max-w-md md:max-w-2xl mx-auto">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-[#22C55E]/10 rounded-full text-[#22C55E]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-8.21l-3.34 1.64"/></svg></div>
               <div><p className="text-sm font-bold text-white">Update available</p><p className="text-[10px] text-zinc-400">New version available — Refresh</p></div>
@@ -424,15 +423,19 @@ const PWABadges = () => {
   );
 };
 
-const App = () => (
-  <Router>
-    <PWABadges />
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/app" element={<Tracker />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  </Router>
-);
+const App = () => {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  
+  return (
+    <Router>
+      <PWABadges />
+      <Routes>
+        <Route path="/" element={isStandalone ? <Navigate to="/app" replace /> : <LandingPage />} />
+        <Route path="/app" element={<Tracker />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;

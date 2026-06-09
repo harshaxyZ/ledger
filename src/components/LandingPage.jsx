@@ -137,10 +137,6 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-      navigate('/app', { replace: true });
-      return;
-    }
     const h = (e) => { e.preventDefault(); setDeferredPrompt(e); };
     window.addEventListener('beforeinstallprompt', h);
     return () => window.removeEventListener('beforeinstallprompt', h);

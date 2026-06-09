@@ -170,7 +170,7 @@ Recent: ${recent}`;
             </div>
 
             <div className="mt-auto pb-8 pt-4">
-               <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+               <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar -mx-6 px-6 pb-2">
                 {["Recap my month", "How to save ₹2000?", "Where am I overspending?"].map((s, i) => (
                   <button 
                     key={i}
