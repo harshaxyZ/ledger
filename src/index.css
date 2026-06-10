@@ -1,5 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Horizon';
+  src: local('Syncopate Bold'), local('Syncopate-Bold');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'Horizon';
+  src: local('Syncopate Regular'), local('Syncopate-Regular');
+  font-weight: 400;
+}
 @theme {
   --color-background: #0A0E14;
   --color-surface: #151B23;
