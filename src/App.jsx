@@ -164,7 +164,7 @@ const Tracker = () => {
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-2xl font-bold">Settings</h3>
                 <div className="flex items-center gap-4">
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">v6.7</span>
+                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">v2</span>
                   <button onClick={() => setIsSettingsOpen(false)} className="p-2 bg-white/5 rounded-full text-zinc-500"><I.X /></button>
                 </div>
               </div>
