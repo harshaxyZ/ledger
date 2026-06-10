@@ -5,19 +5,17 @@ const anim = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transiti
 export default function Slide14() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center">
-      <motion.h1 variants={anim} className="text-[80px] md:text-[96px] font-[700] text-[#ffffff] mb-[20px] text-center">Results</motion.h1>
-      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[40px] text-center">Ledger Coach</motion.h2>
-      <div className="w-full max-w-[1100px] flex justify-between items-center text-left">
-        <motion.div variants={anim} className="w-[40%] flex justify-center bg-transparent">
-          <div className="rounded-[24px] overflow-hidden border-[4px] border-[#222222] shadow-[0_20px_60px_rgba(0,0,0,0.5)] w-full max-h-[55vh] flex items-center justify-center bg-[#000000]">
+      <motion.h1 variants={anim} className="text-[80px] md:text-[96px] font-[700] text-[#ffffff] mb-[10px] text-center">Results</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[30px] text-center">Ledger Coach</motion.h2>
+      <div className="w-full max-w-[1200px] flex justify-between items-center text-left">
+        <motion.div variants={anim} className="w-[50%] flex justify-center bg-transparent">
+          <div className="rounded-[32px] overflow-hidden border-[6px] border-[#222222] shadow-[0_30px_80px_rgba(0,0,0,0.6)] w-full max-h-[75vh] flex items-center justify-center bg-[#000000]">
              <img src="/image_3.webp" alt="Screenshot" className="w-full h-full object-contain" loading="lazy" decoding="async" />
           </div>
         </motion.div>
-        <motion.div variants={anim} className="w-[50%] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-[24px] rounded-[16px]">
-          <h3 className="text-[24px] md:text-[28px] font-[700] text-[#ffffff] mb-[20px]">The Groq AI Coach</h3>
-          <p className="text-[18px] md:text-[20px] text-[#b0b0b0] font-[400] leading-[1.6] whitespace-pre-line">This is the smartest feature of our application.
-
-Instead of just showing numbers, Ledger actually talks to you. You can ask it questions like 'Am I spending too much on food?' and the Groq AI will instantly analyze your local data and give you a helpful, human-like response.</p>
+        <motion.div variants={anim} className="w-[45%] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-[32px] rounded-[16px]">
+          <h3 className="text-[28px] md:text-[32px] font-[700] text-[#ffffff] mb-[20px]">The Groq AI Coach</h3>
+          <p className="text-[18px] md:text-[22px] text-[#b0b0b0] font-[400] leading-[1.6] whitespace-pre-line">This is the smartest feature of our application.\n\nInstead of just showing numbers, Ledger actually talks to you. You can ask it questions like 'Am I spending too much on food?' and the Groq AI will instantly analyze your local data and give you a helpful, human-like response.</p>
         </motion.div>
       </div>
     </motion.div>
