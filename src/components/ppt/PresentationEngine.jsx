@@ -99,7 +99,7 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Syne',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}

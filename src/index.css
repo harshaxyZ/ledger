@@ -1,15 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@800&display=swap');
 @import "tailwindcss";
-
-@font-face {
-  font-family: 'Horizon';
-  src: url('/horizon.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 @layer base {
   body {
-    font-family: 'Horizon', sans-serif;
+    font-family: 'Syne', sans-serif;
   }
 }
