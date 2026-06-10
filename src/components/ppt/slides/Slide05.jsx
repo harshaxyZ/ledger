@@ -1,43 +1,41 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1 } }
-};
-const item = {
-  hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-};
+const container = { show: { transition: { staggerChildren: 0.1 } } };
+const rowAnim = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } } };
 
 export default function Slide05() {
   const rows = [
     { app: "Mint (Intuit)", approach: "Cloud-based aggregation", key: "Automatic bank sync", lim: "Sells user data to advertisers", bg: "bg-[#0a0a0a]" },
-    { app: "YNAB", approach: "Zero-based budgeting", key: "Envelope method", lim: "Requires subscription, stores data online", bg: "bg-[#050505]" },
-    { app: "Expensify", approach: "Receipt scanning", key: "OCR expense capture", lim: "Cloud-only, privacy concerns", bg: "bg-[#0a0a0a]" }
+    { app: "YNAB", approach: "Zero-based budgeting", key: "Envelope method", lim: "Requires paid subscription, stores data online", bg: "bg-[#111111]" },
+    { app: "Expensify", approach: "Receipt scanning OCR", key: "Expense capture", lim: "Cloud-only, major privacy concerns", bg: "bg-[#0a0a0a]" },
+    { app: "Ledger (Ours)", approach: "Local-first architecture", key: "100% offline + AI coach", lim: "Limited to single device (by design)", bg: "bg-[#111111]", highlight: true }
   ];
 
   return (
     <div className="w-full flex flex-col items-center">
-      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Literature Survey</h1>
-      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[60px]">Review of Existing Systems</h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Literature Survey</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">Review of Existing Systems</motion.h2>
       
-      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[900px]">
-        <motion.div variants={item} className="grid grid-cols-4 gap-[2px] bg-[#111111] border-b border-[#222222]">
-          <div className="p-[16px] text-[18px] text-[#ffffff]">App / Study</div>
-          <div className="p-[16px] text-[18px] text-[#ffffff]">Approach</div>
-          <div className="p-[16px] text-[18px] text-[#ffffff]">Key Feature</div>
-          <div className="p-[16px] text-[18px] text-[#ffffff]">Limitation</div>
+      <div className="w-full max-w-[1000px] text-left">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="grid grid-cols-4 bg-[#1a1a1a]">
+          <div className="p-[16px] text-[20px] text-[#ffffff]">App / Study</div>
+          <div className="p-[16px] text-[20px] text-[#ffffff]">Approach</div>
+          <div className="p-[16px] text-[20px] text-[#ffffff]">Key Feature</div>
+          <div className="p-[16px] text-[20px] text-[#ffffff]">Limitation</div>
         </motion.div>
-        {rows.map((r, i) => (
-          <motion.div variants={item} key={i} className={`grid grid-cols-4 gap-[2px] ${r.bg} border-b border-[#222222]`}>
-            <div className="p-[16px] text-[16px] text-[#a0a0a0]">{r.app}</div>
-            <div className="p-[16px] text-[16px] text-[#a0a0a0]">{r.approach}</div>
-            <div className="p-[16px] text-[16px] text-[#a0a0a0]">{r.key}</div>
-            <div className="p-[16px] text-[16px] text-[#a0a0a0]">{r.lim}</div>
-          </motion.div>
-        ))}
-      </motion.div>
+        
+        <motion.div variants={container} initial="hidden" animate="show">
+          {rows.map((r, i) => (
+            <motion.div variants={rowAnim} key={i} className={`grid grid-cols-4 ${r.bg} border-b border-[#222222] ${r.highlight ? 'border-l-[4px] border-l-[#ff3333]' : ''}`}>
+              <div className={`p-[16px] text-[18px] ${r.highlight ? 'text-[#ffffff]' : 'text-[#b0b0b0]'}`}>{r.app}</div>
+              <div className="p-[16px] text-[18px] text-[#b0b0b0]">{r.approach}</div>
+              <div className="p-[16px] text-[18px] text-[#b0b0b0]">{r.key}</div>
+              <div className="p-[16px] text-[18px] text-[#b0b0b0]">{r.lim}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 }

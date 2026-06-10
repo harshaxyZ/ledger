@@ -1,31 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.15 } }
-};
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-};
+const container = { show: { transition: { staggerChildren: 0.2 } } };
+const cardAnim = { hidden: { opacity: 0, x: -50 }, show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } } };
 
 export default function Slide03() {
+  const problems = [
+    { head: "Data Privacy Crisis", body: "Popular apps like Mint and YNAB store financial data on corporate servers. Users are vulnerable to breaches, data sales, and unauthorized access." },
+    { head: "Internet Dependency", body: "Most trackers require constant connectivity. They are completely useless in areas with poor or no network coverage — which is common in India." },
+    { head: "Complex & Cluttered", body: "Existing apps overwhelm users with subscriptions, ads, and unnecessary features instead of simple, fast expense logging." }
+  ];
+
   return (
     <div className="w-full flex flex-col items-center">
-      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Problem Statement</h1>
-      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[60px]">Why Existing Solutions Fail</h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Problem Statement</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">Why Existing Solutions Fail</motion.h2>
       
-      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[800px] flex flex-col gap-[20px] text-left">
-        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
-          • Data Privacy Crisis — Popular apps like Mint and YNAB store financial data on corporate servers, making users vulnerable to breaches and data sales.
-        </motion.p>
-        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
-          • Internet Dependency — Most trackers require constant connectivity, making them useless in areas with poor or no network coverage.
-        </motion.p>
-        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
-          • Complex & Cluttered — Existing apps overwhelm users with unnecessary features, subscriptions, and ads instead of simple, fast expense logging.
-        </motion.p>
+      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[900px] flex flex-col gap-[24px] text-left">
+        {problems.map((p, i) => (
+          <motion.div variants={cardAnim} key={i} className="bg-[#111111] py-[28px] px-[32px] rounded-[16px] border-l-[4px] border-[#ff3333]">
+            <h3 className="text-[28px] text-[#ffffff] mb-[12px]">{p.head}</h3>
+            <p className="text-[20px] text-[#b0b0b0] leading-[1.7]">{p.body}</p>
+          </motion.div>
+        ))}
       </motion.div>
     </div>
   );

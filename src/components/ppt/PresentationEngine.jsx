@@ -23,7 +23,7 @@ const PresentationEngine = ({ slides }) => {
     }
   }, [currentSlide]);
 
-  // Keyboard Navigation
+  // Keyboard & Scroll Navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Fullscreen support (Ctrl+F or Cmd+F)
@@ -39,16 +39,35 @@ const PresentationEngine = ({ slides }) => {
         return;
       }
 
-      if (['ArrowRight', 'Space'].includes(e.code) || e.key === ' ') {
+      if (['ArrowDown', 'ArrowRight', 'PageDown', 'Space'].includes(e.code) || e.key === ' ') {
         e.preventDefault();
         goToNext();
-      } else if (['ArrowLeft'].includes(e.code)) {
+      } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
         e.preventDefault();
         goToPrev();
       }
     };
+    
+    // Wheel navigation (debounce to prevent skipping)
+    let wheelTimeout;
+    const handleWheel = (e) => {
+      e.preventDefault();
+      if (wheelTimeout) return;
+      wheelTimeout = setTimeout(() => {
+        wheelTimeout = null;
+      }, 800);
+      
+      if (e.deltaY > 0) goToNext();
+      else if (e.deltaY < 0) goToPrev();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+    };
   }, [goToNext, goToPrev]);
 
   // Touch Navigation
@@ -58,10 +77,10 @@ const PresentationEngine = ({ slides }) => {
 
   const handleTouchEnd = (e) => {
     if (!touchStart) return;
-    const diffX = touchStart.x - e.changedTouches[0].clientX;
+    const diffY = touchStart.y - e.changedTouches[0].clientY;
     
-    if (diffX > 50) goToNext();
-    else if (diffX < -50) goToPrev();
+    if (diffY > 50) goToNext();
+    else if (diffY < -50) goToPrev();
     
     setTouchStart(null);
   };
@@ -73,16 +92,16 @@ const PresentationEngine = ({ slides }) => {
     return () => clearTimeout(timer);
   }, [currentSlide]);
 
-  // Horizontal slide variants
+  // Vertical slide variants
   const variants = {
     enter: (direction) => ({
-      x: direction > 0 ? '100vw' : '-100vw',
+      y: direction > 0 ? '100vh' : '-100vh',
     }),
     center: {
-      x: 0,
+      y: 0,
     },
     exit: (direction) => ({
-      x: direction < 0 ? '100vw' : '-100vw',
+      y: direction < 0 ? '100vh' : '-100vh',
     })
   };
 
@@ -90,10 +109,10 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon','Inter','Geist',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon','Inter','Geist','Space_Grotesk',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={{ userSelect: 'none' }}
+      style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}
     >
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
@@ -103,10 +122,10 @@ const PresentationEngine = ({ slides }) => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-[60px]"
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-[80px]"
         >
-          <div className="w-full h-full max-w-[900px] flex flex-col items-center justify-center">
+          <div className="w-full h-full max-w-[1000px] flex flex-col items-center justify-center">
             <CurrentSlideComponent />
           </div>
         </motion.div>
@@ -114,7 +133,7 @@ const PresentationEngine = ({ slides }) => {
 
       {/* Top Right Page Number Indicator */}
       {currentSlide > 0 && (
-        <div className="absolute top-[60px] right-[60px] text-[14px] text-[#a0a0a0] z-50">
+        <div className="absolute top-[80px] right-[80px] text-[18px] text-[#666666] z-50 tracking-wider">
           {String(currentSlide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
         </div>
       )}
@@ -127,9 +146,9 @@ const PresentationEngine = ({ slides }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[12px] text-[#a0a0a0] tracking-[0.2em] z-50"
+            className="absolute bottom-[40px] left-0 right-0 flex justify-center text-[14px] text-[#666666] font-bold tracking-[0.2em] z-50"
           >
-            ← →
+            ↑ ↓
           </motion.div>
         )}
       </AnimatePresence>
