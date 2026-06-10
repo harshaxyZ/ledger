@@ -196,6 +196,26 @@ const Tracker = () => {
                 <motion.button whileTap={{ scale: 0.98 }} onClick={() => { exportData(); setIsSettingsOpen(false); }} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-[#22C55E]/10 rounded-xl text-[#22C55E]"><I.Download /></div><div><p className="text-xs font-bold">Export Data</p><p className="text-[10px] text-zinc-500">Download backup JSON</p></div></motion.button>
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleReset} className="w-full p-4 bg-[#0A0E14] border border-red-500/20 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-red-500/10 rounded-xl text-red-500"><I.Trash /></div><div><p className="text-xs font-bold text-red-500">Reset All Logs</p><p className="text-[10px] text-zinc-500">Delete all data</p></div></motion.button>
                 <motion.button whileTap={{ scale: 0.98 }} onClick={() => window.location.reload()} className="w-full p-4 bg-[#0A0E14] border border-white/5 rounded-2xl flex items-center gap-4 text-left"><div className="p-2 bg-white/5 rounded-xl text-zinc-400"><I.Out /></div><div><p className="text-xs font-bold">Restart</p><p className="text-[10px] text-zinc-500">Clear cache</p></div></motion.button>
+                <input
+                  type="text"
+                  placeholder="Type secret phrase..."
+                  onChange={(e) => {
+                    if (e.target.value.toLowerCase() === 'hello ledger activate demo') {
+                      clearAllData();
+                      setUserName('Harsha');
+                      const now = new Date();
+                      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15).toISOString();
+                      const thisMonth = new Date().toISOString();
+                      addTransaction("3200", "expense", "shopping", "Weekly Groceries", lastMonth);
+                      addTransaction("1450", "expense", "food", "Dinner with friends", lastMonth);
+                      addTransaction("649", "expense", "other", "Netflix", lastMonth);
+                      addTransaction("450", "expense", "food", "Zomato", thisMonth);
+                      addTransaction("200", "expense", "transport", "Uber", thisMonth);
+                      window.location.reload();
+                    }
+                  }}
+                  className="w-full p-4 bg-transparent border border-transparent text-[10px] text-zinc-800 outline-none placeholder-zinc-800/50 mt-4 text-center"
+                />
               </div>
             </motion.div>
           </div>

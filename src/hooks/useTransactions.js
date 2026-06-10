@@ -29,7 +29,7 @@ export const useTransactions = () => {
     }
   }, [userName]);
 
-  const addTransaction = (amount, type, categoryId, note = '') => {
+  const addTransaction = (amount, type, categoryId, note = '', customDate = null) => {
     const amountVal = validateAmount(amount);
     if (!amountVal.valid) throw new Error(amountVal.error);
 
@@ -50,7 +50,7 @@ export const useTransactions = () => {
       type,
       categoryId,
       note: note || '',
-      date: new Date().toISOString(),
+      date: customDate || new Date().toISOString(),
     };
     
     setTransactions(prev => [newTransaction, ...prev]);

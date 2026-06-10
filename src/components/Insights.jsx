@@ -16,7 +16,7 @@ const Insights = ({ transactions }) => {
   const topCategory = byCategory[0];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-5 py-4 space-y-4 overflow-y-auto no-scrollbar pb-28">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-2 py-4 space-y-4 overflow-y-auto no-scrollbar pb-28 w-full">
       <h2 className="text-2xl font-extrabold">Insights</h2>
       
       <div className="grid grid-cols-2 gap-4">

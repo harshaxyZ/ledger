@@ -22,7 +22,7 @@ const History = ({ transactions, deleteTransaction }) => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-5 py-4 space-y-6 overflow-y-auto no-scrollbar pb-28">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="px-2 py-4 space-y-6 overflow-y-auto no-scrollbar pb-28 w-full">
       <h2 className="text-2xl font-extrabold">History</h2>
       
       <div className="space-y-4">
@@ -35,14 +35,14 @@ const History = ({ transactions, deleteTransaction }) => {
           />
         </div>
 
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2">
           <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === '' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>All</motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('expense')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === 'expense' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>Expense</motion.button>
           <motion.button whileTap={{ scale: 0.95 }} onClick={() => setTypeFilter('income')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${typeFilter === 'income' ? 'bg-[#22C55E] text-black' : 'bg-white/5 text-zinc-400'}`}>Income</motion.button>
         </div>
 
         {typeFilter === 'expense' && (
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-5 px-5">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-2 px-2">
             <motion.button whileTap={{ scale: 0.95 }} onClick={() => setCatFilter('')} className={`px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${catFilter === '' ? 'bg-white/20 text-white' : 'bg-white/5 text-zinc-400'}`}>All Categories</motion.button>
             {CATEGORIES.map(cat => (
               <motion.button key={cat.id} whileTap={{ scale: 0.95 }} onClick={() => setCatFilter(cat.id)} className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-colors ${catFilter === cat.id ? 'bg-white/20 text-white' : 'bg-white/5 text-zinc-400'}`}>
