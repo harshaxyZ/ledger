@@ -1,53 +1,47 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+const stepContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.2, delayChildren: 1.0 } }
 };
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+const stepItem = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.4 } }
 };
 
 export default function Slide08() {
+  const steps = [
+    { side: "left", head: "Requirement Analysis", body: "Identified core needs: offline storage, fast logging, AI integration, and privacy." },
+    { side: "right", head: "System Design", body: "Designed modular architecture with separate layers for UI, data, AI, and notifications." },
+    { side: "left", head: "Development", body: "Built with Kotlin, Jetpack Compose, Room database, and Groq API for AI features." },
+    { side: "right", head: "Testing", body: "Tested offline functionality, data persistence, AI response accuracy, and UI responsiveness." },
+    { side: "left", head: "Deployment", body: "Packaged as Android APK. Future: Google Play Store release and desktop port." },
+  ];
+
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
-      <div className="w-1/2 pr-16 flex flex-col justify-center">
-        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
-          THE LEDGER APPROACH
-        </motion.h1>
-        
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white mb-8">
-          Ledger removes unnecessary infrastructure.
-        </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-8">
-          The application operates directly on the user's device. Transactions are stored locally, and insights are generated instantly.
-        </motion.p>
-        <motion.p variants={item} className="text-3xl leading-relaxed text-white font-medium">
-          The result is a faster and more private experience.
-        </motion.p>
-      </div>
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Methodology</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[40px]">Development Process & Workflow</h2>
       
-      <div className="w-1/2 flex justify-center">
-        <motion.div variants={item} className="flex flex-col items-center gap-6">
-          <div className="w-56 h-32 bg-white text-black rounded-2xl flex items-center justify-center text-2xl font-bold shadow-[0_0_40px_rgba(255,255,255,0.2)]">User</div>
-          <div className="w-[2px] h-12 bg-white/40"></div>
-          <div className="w-56 h-32 bg-[#111] rounded-2xl border-2 border-white/40 flex items-center justify-center text-2xl font-bold">Ledger App</div>
-          <div className="w-[2px] h-12 bg-white/40"></div>
-          <div className="flex gap-8">
-            <div className="w-40 h-32 bg-[#111] rounded-2xl border border-white/20 flex flex-col items-center justify-center text-lg font-medium text-white/70">
-              <span>Local</span>
-              <span>Storage</span>
-            </div>
-            <div className="w-40 h-32 bg-[#111] rounded-2xl border border-white/20 flex flex-col items-center justify-center text-lg font-medium text-white/70">
-              <span>Instant</span>
-              <span>Insights</span>
-            </div>
-          </div>
+      <div className="relative w-full max-w-[800px] flex flex-col items-center">
+        {/* The line */}
+        <motion.div 
+          initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1.0, ease: "linear" }}
+          className="absolute top-[20px] bottom-[20px] w-[2px] bg-[#333333] left-1/2 -translate-x-1/2"
+        ></motion.div>
+        
+        <motion.div variants={stepContainer} initial="hidden" animate="show" className="w-full flex flex-col gap-[20px] relative z-10">
+          {steps.map((s, i) => (
+            <motion.div variants={stepItem} key={i} className={`flex w-full ${s.side === 'left' ? 'justify-start' : 'justify-end'}`}>
+              <div className={`w-[350px] ${s.side === 'left' ? 'text-right pr-[40px]' : 'text-left pl-[40px]'}`}>
+                <h3 className="text-[22px] text-[#ffffff] leading-[1.2] mb-[8px]">{s.head}</h3>
+                <p className="text-[16px] text-[#a0a0a0] leading-[1.6]">{s.body}</p>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 }

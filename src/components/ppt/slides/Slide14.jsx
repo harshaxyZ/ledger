@@ -1,49 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.15 } }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-};
-
 export default function Slide14() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex flex-col justify-center">
-      <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-16 text-center">
-        WORKS ANYWHERE
-      </motion.h1>
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Results</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[40px]">Ledger Coach — AI Assistant</h2>
       
-      <div className="max-w-4xl mx-auto text-center mb-20">
-        <motion.p variants={item} className="text-3xl leading-relaxed text-white mb-6 font-medium">
-          Ledger is built as a Progressive Web App.
-        </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-6">
-          The application can be installed directly from the browser. Once installed, it behaves like a native application.
-        </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70">
-          Even when internet connectivity is unavailable, users can continue tracking expenses normally.
-        </motion.p>
+      <div className="w-full max-w-[900px] flex justify-between items-center text-left">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
+          className="w-[55%] flex justify-center"
+        >
+          <img src="/image_3.png" alt="AI Coach" className="max-h-[500px] rounded-[12px] object-contain" />
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.3 }}
+          className="w-[40%]"
+        >
+          <h3 className="text-[24px] text-[#ffffff] leading-[1.2] mb-[16px]">Personal AI Financial Coach</h3>
+          <p className="text-[18px] text-[#a0a0a0] leading-[1.6]">
+            Powered by Groq AI, the Ledger Coach analyzes spending patterns and provides actionable advice. Users can ask questions like 'How can I save more?' or 'Recap my day' and receive instant, personalized responses. The AI operates through API calls — no personal data is stored or trained on.
+          </p>
+        </motion.div>
       </div>
-      
-      <motion.div variants={item} className="grid grid-cols-4 gap-6 w-full max-w-5xl mx-auto">
-        <div className="bg-[#111] p-10 rounded-3xl border border-white/10 text-center flex flex-col justify-center min-h-[160px]">
-          <h2 className="text-2xl font-bold">Installable</h2>
-        </div>
-        <div className="bg-[#111] p-10 rounded-3xl border border-white/10 text-center flex flex-col justify-center min-h-[160px]">
-          <h2 className="text-2xl font-bold">Offline</h2>
-        </div>
-        <div className="bg-[#111] p-10 rounded-3xl border border-white/10 text-center flex flex-col justify-center min-h-[160px]">
-          <h2 className="text-2xl font-bold">Fast</h2>
-        </div>
-        <div className="bg-[#111] p-10 rounded-3xl border border-white/10 text-center flex flex-col justify-center min-h-[160px]">
-          <h2 className="text-2xl font-bold">Reliable</h2>
-        </div>
-      </motion.div>
-    </motion.div>
+    </div>
   );
 }

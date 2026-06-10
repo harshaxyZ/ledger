@@ -1,40 +1,32 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import PhoneMockup from '../PhoneMockup';
 
 const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  hidden: {},
+  show: { transition: { staggerChildren: 0.15 } }
 };
-
 const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
 
 export default function Slide03() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
-      <div className="w-1/2 pr-16 flex flex-col justify-center">
-        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
-          WHAT IS LEDGER?
-        </motion.h1>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-8">
-          Ledger is a privacy-first expense tracking application built as a Progressive Web App.
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Problem Statement</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[60px]">Why Existing Solutions Fail</h2>
+      
+      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[800px] flex flex-col gap-[20px] text-left">
+        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
+          • Data Privacy Crisis — Popular apps like Mint and YNAB store financial data on corporate servers, making users vulnerable to breaches and data sales.
         </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-8">
-          Most finance apps depend on cloud servers and user accounts. Ledger takes a different approach.
+        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
+          • Internet Dependency — Most trackers require constant connectivity, making them useless in areas with poor or no network coverage.
         </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-8">
-          Everything works directly on the user's device. Expenses, budgets, insights, and history remain private and accessible even without internet connectivity.
+        <motion.p variants={item} className="text-[20px] text-[#a0a0a0] leading-[1.6]">
+          • Complex & Cluttered — Existing apps overwhelm users with unnecessary features, subscriptions, and ads instead of simple, fast expense logging.
         </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white font-medium">
-          Ledger focuses on speed, simplicity, privacy, and financial awareness.
-        </motion.p>
-      </div>
-      <div className="w-1/2 flex justify-center">
-        <PhoneMockup src="/ppt/screenshot_dashboard.png" alt="Dashboard" />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

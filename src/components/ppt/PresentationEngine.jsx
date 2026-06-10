@@ -5,6 +5,7 @@ const PresentationEngine = ({ slides }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
   const [touchStart, setTouchStart] = useState(null);
+  const [showNavHints, setShowNavHints] = useState(true);
   
   const totalSlides = slides.length;
 
@@ -38,10 +39,10 @@ const PresentationEngine = ({ slides }) => {
         return;
       }
 
-      if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code) || e.key === ' ') {
+      if (['ArrowRight', 'Space'].includes(e.code) || e.key === ' ') {
         e.preventDefault();
         goToNext();
-      } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.code)) {
+      } else if (['ArrowLeft'].includes(e.code)) {
         e.preventDefault();
         goToPrev();
       }
@@ -50,72 +51,38 @@ const PresentationEngine = ({ slides }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goToNext, goToPrev]);
 
-  // Wheel Navigation (Debounced)
-  useEffect(() => {
-    let wheelTimeout;
-    const handleWheel = (e) => {
-      e.preventDefault();
-      if (wheelTimeout) return;
-      
-      if (e.deltaY > 20) {
-        goToNext();
-        wheelTimeout = setTimeout(() => wheelTimeout = null, 800);
-      } else if (e.deltaY < -20) {
-        goToPrev();
-        wheelTimeout = setTimeout(() => wheelTimeout = null, 800);
-      }
-    };
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [goToNext, goToPrev]);
-
   // Touch Navigation
   const handleTouchStart = (e) => {
-    setTouchStart({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY
-    });
+    setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
   };
 
   const handleTouchEnd = (e) => {
     if (!touchStart) return;
-    const touchEnd = {
-      x: e.changedTouches[0].clientX,
-      y: e.changedTouches[0].clientY
-    };
+    const diffX = touchStart.x - e.changedTouches[0].clientX;
     
-    const diffX = touchStart.x - touchEnd.x;
-    const diffY = touchStart.y - touchEnd.y;
+    if (diffX > 50) goToNext();
+    else if (diffX < -50) goToPrev();
     
-    // Check if swipe is mostly horizontal or vertical
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX > 50) goToNext();
-      else if (diffX < -50) goToPrev();
-    } else {
-      if (diffY > 50) goToNext();
-      else if (diffY < -50) goToPrev();
-    }
     setTouchStart(null);
   };
 
-  // Variants for subtle transitions
+  // Nav Hints Timer
+  useEffect(() => {
+    setShowNavHints(true);
+    const timer = setTimeout(() => setShowNavHints(false), 3000);
+    return () => clearTimeout(timer);
+  }, [currentSlide]);
+
+  // Horizontal slide variants
   const variants = {
     enter: (direction) => ({
-      y: direction > 0 ? 50 : -50,
-      opacity: 0,
-      scale: 0.98,
+      x: direction > 0 ? '100vw' : '-100vw',
     }),
     center: {
-      zIndex: 1,
-      y: 0,
-      opacity: 1,
-      scale: 1,
+      x: 0,
     },
     exit: (direction) => ({
-      zIndex: 0,
-      y: direction < 0 ? 50 : -50,
-      opacity: 0,
-      scale: 1.02,
+      x: direction < 0 ? '100vw' : '-100vw',
     })
   };
 
@@ -123,7 +90,7 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-black text-white overflow-hidden flex flex-col font-sans"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon','Inter','Geist',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ userSelect: 'none' }}
@@ -136,36 +103,36 @@ const PresentationEngine = ({ slides }) => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-0 w-full h-full flex flex-col p-8 md:p-16 lg:p-24"
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-[60px]"
         >
-          <CurrentSlideComponent />
+          <div className="w-full h-full max-w-[900px] flex flex-col items-center justify-center">
+            <CurrentSlideComponent />
+          </div>
         </motion.div>
       </AnimatePresence>
 
       {/* Top Right Page Number Indicator */}
-      {currentSlide > 0 && currentSlide < totalSlides - 1 && (
-        <div className="absolute top-12 right-12 text-2xl font-bold tracking-widest text-white/40 z-50">
-          {String(currentSlide).padStart(2, '0')} / {String(totalSlides - 2).padStart(2, '0')}
+      {currentSlide > 0 && (
+        <div className="absolute top-[60px] right-[60px] text-[14px] text-[#a0a0a0] z-50">
+          {String(currentSlide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
         </div>
       )}
 
-      {/* Progress Indicator */}
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center z-50">
-        <div className="flex gap-2 items-center">
-          {slides.map((_, i) => (
-            <button 
-              key={i}
-              onClick={() => {
-                setDirection(i > currentSlide ? 1 : -1);
-                setCurrentSlide(i);
-              }}
-              className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/20 hover:bg-white/40'}`}
-              aria-label={`Go to slide ${i + 1}`}
-            />
-          ))}
-        </div>
-      </div>
+      {/* Subtle Navigation Hints */}
+      <AnimatePresence>
+        {showNavHints && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[12px] text-[#a0a0a0] tracking-[0.2em] z-50"
+          >
+            ← →
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -1,51 +1,47 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import PhoneMockup from '../PhoneMockup';
 
 const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  hidden: {},
+  show: { transition: { staggerChildren: 0.25 } }
 };
-
 const item = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 40 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+const arrow = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.5 } }
 };
 
 export default function Slide09() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
-      <div className="w-1/2 pr-16 flex flex-col justify-center">
-        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
-          TRACK EVERYTHING
-        </motion.h1>
-        
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/80 mb-8">
-          The dashboard provides a quick overview of income, expenses, balance, and budget status.
-        </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/60 mb-12">
-          Users immediately understand their financial position without navigating through multiple screens.
-        </motion.p>
-        
-        <motion.h3 variants={item} className="text-white/40 tracking-widest uppercase mb-6 text-sm font-bold">Key Features</motion.h3>
-        <motion.div variants={item} className="grid grid-cols-2 gap-6">
-          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
-            <p className="text-xl font-medium">Income Tracking</p>
-          </div>
-          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
-            <p className="text-xl font-medium">Expense Tracking</p>
-          </div>
-          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
-            <p className="text-xl font-medium">Net Balance Monitoring</p>
-          </div>
-          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
-            <p className="text-xl font-medium">Budget Alerts</p>
-          </div>
+    <div className="w-full flex flex-col items-center text-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">System Architecture</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[60px]">How Ledger is Structured</h2>
+      
+      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[700px] flex flex-col items-center">
+        <motion.div variants={item} className="w-full bg-[#1a1a1a] p-[20px]">
+          <h3 className="text-[22px] text-[#ffffff] leading-[1.2] mb-[8px]">Presentation Layer</h3>
+          <p className="text-[16px] text-[#a0a0a0] leading-[1.6]">Jetpack Compose UI | Dashboard | History | Insights | AI Coach Chat</p>
         </motion.div>
-      </div>
-      <div className="w-1/2 flex justify-center">
-        <PhoneMockup src="/ppt/screenshot_dashboard.png" alt="Dashboard" />
-      </div>
-    </motion.div>
+        
+        <motion.div variants={arrow} className="text-[20px] text-[#a0a0a0] my-[5px]">▼</motion.div>
+        
+        <motion.div variants={item} className="w-full bg-[#151515] p-[20px]">
+          <h3 className="text-[22px] text-[#ffffff] leading-[1.2] mb-[8px]">Business Logic Layer</h3>
+          <p className="text-[16px] text-[#a0a0a0] leading-[1.6]">ViewModels | Repository Pattern | Budget Engine | AI Prompt Builder | Notification Manager</p>
+        </motion.div>
+        
+        <motion.div variants={arrow} className="text-[20px] text-[#a0a0a0] my-[5px]">▼</motion.div>
+        
+        <motion.div variants={item} className="w-full bg-[#101010] p-[20px]">
+          <h3 className="text-[22px] text-[#ffffff] leading-[1.2] mb-[8px]">Data Layer</h3>
+          <p className="text-[16px] text-[#a0a0a0] leading-[1.6]">Room Database (SQLite) | Local SharedPreferences | On-Device File Storage</p>
+        </motion.div>
+      </motion.div>
+      
+      <p className="text-[16px] text-[#a0a0a0] mt-[40px]">All layers operate entirely on-device. No network calls for core functionality.</p>
+    </div>
   );
 }

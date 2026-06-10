@@ -1,36 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-};
-
 export default function Slide15() {
-  const techs = ["React", "Vite", "Tailwind CSS", "Framer Motion", "Local Storage", "Groq AI", "PWA", "Vercel"];
-  
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex flex-col justify-center">
-      <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-20 text-center">
-        BUILT WITH MODERN WEB TECHNOLOGIES
-      </motion.h1>
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Results</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[40px]">Spending Insights</h2>
       
-      <motion.div variants={item} className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto mb-20">
-        {techs.map((tech, idx) => (
-          <div key={idx} className="px-10 py-6 bg-[#111] rounded-2xl border border-white/10 text-2xl font-medium">
-            {tech}
-          </div>
-        ))}
-      </motion.div>
-      
-      <motion.p variants={item} className="text-3xl text-center text-white/60 max-w-4xl mx-auto leading-relaxed">
-        These technologies were selected to maximize performance, maintainability, and user experience.
-      </motion.p>
-    </motion.div>
+      <div className="w-full max-w-[900px] flex justify-between items-center text-left">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
+          className="w-[55%] flex justify-center"
+        >
+          <img src="/image_4.png" alt="Insights" className="max-h-[500px] rounded-[12px] object-contain" />
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.3 }}
+          className="w-[40%]"
+        >
+          <h3 className="text-[24px] text-[#ffffff] leading-[1.2] mb-[16px]">Visual Spending Breakdown</h3>
+          <p className="text-[18px] text-[#a0a0a0] leading-[1.6]">
+            The Insights page transforms raw data into actionable intelligence. Users see total spending, transaction count, average per transaction, and top category. A color-coded breakdown (displayed in grayscale/monochrome in the app) shows exactly where money goes — Rent & Home, Groceries, Food, Shopping, and Transport.
+          </p>
+        </motion.div>
+      </div>
+    </div>
   );
 }

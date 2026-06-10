@@ -2,43 +2,35 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  hidden: {},
+  show: { transition: { staggerChildren: 0.15 } }
 };
-
 const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  hidden: { opacity: 0, x: -60 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.4 } }
 };
 
 export default function Slide11() {
+  const modules = [
+    { name: "Dashboard Module", desc: "Real-time spending overview with daily totals, monthly summaries, and quick-add expense button." },
+    { name: "Transaction History Module", desc: "Chronological log with category filters, search functionality, and swipe-to-delete gestures." },
+    { name: "Insights Module", desc: "Visual category breakdown using charts, top spending categories, and trend analysis." },
+    { name: "Budget Module", desc: "Monthly budget setup with overspend alerts, progress indicators, and category-wise limits." },
+  ];
+
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex flex-col justify-center">
-      <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-16 text-center">
-        STAY WITHIN LIMITS
-      </motion.h1>
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Implementation</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[60px]">Core Modules Developed</h2>
       
-      <div className="max-w-4xl mx-auto text-center mb-24">
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white mb-6">
-          Users can define spending limits for different categories.
-        </motion.p>
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-6">
-          When spending approaches the limit, Ledger immediately displays visual warnings.
-        </motion.p>
-        <motion.p variants={item} className="text-3xl leading-relaxed font-bold text-white">
-          This creates awareness before overspending occurs.
-        </motion.p>
-      </div>
-      
-      <motion.div variants={item} className="flex justify-center items-center gap-6 w-full max-w-6xl mx-auto">
-        <div className="flex-1 h-32 bg-[#111] rounded-2xl border border-white/10 flex items-center justify-center text-xl font-bold">Budget Created</div>
-        <div className="text-white/30 text-3xl">→</div>
-        <div className="flex-1 h-32 bg-[#111] rounded-2xl border border-white/10 flex items-center justify-center text-xl font-bold">Expense Added</div>
-        <div className="text-white/30 text-3xl">→</div>
-        <div className="flex-1 h-32 bg-[#111] rounded-2xl border border-white/10 flex items-center justify-center text-xl font-bold">Limit Checked</div>
-        <div className="text-white/30 text-3xl">→</div>
-        <div className="flex-1 h-32 bg-white text-black rounded-2xl border border-white flex items-center justify-center text-xl font-bold">Warning Triggered</div>
+      <motion.div variants={container} initial="hidden" animate="show" className="w-full max-w-[800px] flex flex-col gap-[16px] text-left">
+        {modules.map((m, i) => (
+          <motion.div variants={item} key={i} className="bg-[#111111] px-[30px] py-[20px] rounded-[8px] w-full">
+            <h3 className="text-[22px] text-[#ffffff] leading-[1.2] mb-[8px]">{m.name}</h3>
+            <p className="text-[16px] text-[#a0a0a0] leading-[1.6]">{m.desc}</p>
+          </motion.div>
+        ))}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

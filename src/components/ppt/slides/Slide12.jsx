@@ -1,43 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import PhoneMockup from '../PhoneMockup';
-
-const container = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-};
 
 export default function Slide12() {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
-      <div className="w-1/2 pr-16 flex flex-col justify-center">
-        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
-          YOUR PERSONAL FINANCE GUIDE
-        </motion.h1>
-        
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white mb-12">
-          Ledger Coach uses AI assistance to help users understand their finances.
-        </motion.p>
-        
-        <motion.h3 variants={item} className="text-white/40 tracking-widest uppercase mb-6 text-sm font-bold">Example Queries</motion.h3>
-        <motion.div variants={item} className="flex flex-col gap-4 mb-12">
-          <div className="p-5 bg-[#111] rounded-2xl border border-white/5 text-xl">"How can I save more money?"</div>
-          <div className="p-5 bg-[#111] rounded-2xl border border-white/5 text-xl">"Where am I overspending?"</div>
-          <div className="p-5 bg-[#111] rounded-2xl border border-white/5 text-xl">"Summarize this month."</div>
+    <div className="w-full flex flex-col items-center">
+      <h1 className="text-[56px] text-[#ffffff] leading-[1.2] mb-[24px]">Results</h1>
+      <h2 className="text-[28px] text-[#a0a0a0] leading-[1.2] mb-[40px]">Dashboard View</h2>
+      
+      <div className="w-full max-w-[900px] flex justify-between items-center text-left">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
+          className="w-[55%] flex justify-center"
+        >
+          <img src="/image_1.png" alt="Dashboard" className="max-h-[500px] rounded-[12px] object-contain" />
         </motion.div>
         
-        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 border-l-4 border-white/30 pl-6">
-          The system transforms raw financial data into understandable advice.
-        </motion.p>
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.3 }}
+          className="w-[40%]"
+        >
+          <h3 className="text-[24px] text-[#ffffff] leading-[1.2] mb-[16px]">Dashboard Overview</h3>
+          <p className="text-[18px] text-[#a0a0a0] leading-[1.6]">
+            The home screen provides an instant snapshot of financial health. Users see today's spending, monthly totals, and recent transactions at a glance. The 'Add Expense' button enables two-second logging. The bottom navigation provides quick access to History, Insights, and AI Coach.
+          </p>
+        </motion.div>
       </div>
-      <div className="w-1/2 flex justify-center">
-        <PhoneMockup src="/ppt/screenshot_privacy.png" alt="Coach" />
-      </div>
-    </motion.div>
+    </div>
   );
 }
