@@ -11,6 +11,7 @@ import Sparkline from './components/Sparkline';
 import History from './components/History';
 import Insights from './components/Insights';
 import LandingPage from './components/LandingPage';
+import Presentation from './components/ppt/Presentation';
 
 // SVG Icons
 const I = {
@@ -460,6 +461,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={isStandalone ? <Navigate to="/app" replace /> : <LandingPage />} />
         <Route path="/app" element={<Tracker />} />
+        <Route path="/ppt" element={<Presentation />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
