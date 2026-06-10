@@ -12,10 +12,10 @@ export default function Slide08() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Methodology</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[40px]">Development Process & Workflow</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Methodology</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Development Process & Workflow</motion.h2>
       
-      <div className="relative w-full max-w-[900px] flex flex-col items-center mt-[20px]">
+      <div className="relative w-full max-w-[1200px] flex flex-col items-center mt-[20px]">
         {/* Animated Central Line */}
         <motion.div 
           initial={{ height: 0 }} animate={{ height: "100%" }} transition={{ duration: 1.2, ease: "easeInOut", delay: 0.3 }}

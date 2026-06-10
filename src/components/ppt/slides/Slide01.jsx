@@ -9,7 +9,7 @@ export default function Slide01() {
         animate={{ opacity: 1, scale: 1.0 }} 
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="absolute inset-0 bg-contain bg-center bg-no-repeat" 
-        style={{ backgroundImage: "url('/college_slide.png')" }}
+        style={{ backgroundImage: "url('/slideone.png')" }}
       />
     </div>
   );

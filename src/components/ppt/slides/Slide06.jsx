@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 export default function Slide06() {
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Existing System</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">How Current Expense Trackers Work</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Existing System</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">How Current Expense Trackers Work</motion.h2>
       
-      <div className="w-full max-w-[1000px] flex justify-between text-left">
+      <div className="w-full max-w-[1300px] flex justify-between text-left">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.3 }} className="w-[48%]">
           <h3 className="text-[28px] text-[#ffffff] mb-[24px]">How They Work</h3>
           <p className="text-[20px] text-[#b0b0b0] leading-[1.7]">

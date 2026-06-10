@@ -15,10 +15,10 @@ export default function Slide09() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[30px]">System Architecture</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[40px]">How Ledger is Structured</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[15px]">System Architecture</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">How Ledger is Structured</motion.h2>
       
-      <motion.div variants={layerContainer} initial="hidden" animate="show" className="w-full max-w-[900px] flex flex-col">
+      <motion.div variants={layerContainer} initial="hidden" animate="show" className="w-full max-w-[1200px] flex flex-col">
         
         {/* Layer 1 */}
         <motion.div variants={layerAnim} className="bg-[#1a1a1a] p-[24px] rounded-[16px] flex flex-col items-center">
@@ -45,7 +45,7 @@ export default function Slide09() {
         <DownArrow />
 
         {/* Layer 3 */}
-        <motion.div variants={layerAnim} className="bg-[#111111] p-[24px] rounded-[16px] flex flex-col items-center mb-[30px]">
+        <motion.div variants={layerAnim} className="bg-[#111111] p-[24px] rounded-[16px] flex flex-col items-center mb-[15px]">
           <div className="text-[20px] text-[#666666] uppercase tracking-wider mb-[20px]">Data Layer</div>
           <div className="flex gap-[12px] w-full justify-center">
             {["Room Database", "SharedPreferences", "Local File Storage"].map((b, i) => (

@@ -4,15 +4,15 @@ import { motion } from 'framer-motion';
 export default function Slide13() {
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Results</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">Transaction History</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Results</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Transaction History</motion.h2>
       
-      <div className="w-full max-w-[1000px] flex justify-between items-center text-left">
+      <div className="w-full max-w-[1300px] flex justify-between items-center text-left">
         <motion.div 
           initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-[60%] flex justify-center"
         >
-          <img src="/image_2.png" alt="History" className="w-full max-h-[70vh] rounded-[16px] border border-[#222222] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] object-contain" />
+          <img src="/image_2.png" alt="History" className="w-full max-h-[60vh] rounded-[16px] border border-[#222222] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] object-contain" />
         </motion.div>
         
         <motion.div 

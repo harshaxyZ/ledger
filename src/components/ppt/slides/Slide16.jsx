@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 export default function Slide16() {
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">AI Coach & Budget System</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">Smart Features That Make a Difference</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">AI Coach & Budget System</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Smart Features That Make a Difference</motion.h2>
       
-      <div className="w-full max-w-[1000px] flex justify-between text-left">
+      <div className="w-full max-w-[1300px] flex justify-between text-left">
         <motion.div 
           initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
           className="w-[48%] bg-[#161616] p-[32px] rounded-[16px]"

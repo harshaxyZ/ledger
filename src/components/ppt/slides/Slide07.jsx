@@ -22,14 +22,14 @@ export default function Slide07() {
 
   return (
     <div className="w-full flex flex-col items-center text-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[40px]">Proposed System</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-[500] mb-[50px]">Ledger — A Better Approach</motion.h2>
+      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Proposed System</motion.h1>
+      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Ledger — A Better Approach</motion.h2>
       
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }} className="text-[22px] text-[#b0b0b0] leading-[1.7] max-w-[900px] mb-[50px]">
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }} className="text-[22px] text-[#b0b0b0] leading-[1.7] max-w-[1200px] mb-[20px]">
         Ledger reimagines expense tracking by removing the cloud entirely. All data lives in a local SQLite database on the user's Android device. The app features a clean dashboard, full transaction history with search and filters, visual category breakdowns, smart budget alerts, and an AI coach powered by Groq AI — all without ever sending data to a server.
       </motion.p>
       
-      <motion.div variants={container} initial="hidden" animate="show" className="flex items-center justify-center mb-[50px]">
+      <motion.div variants={container} initial="hidden" animate="show" className="flex items-center justify-center mb-[20px]">
         <motion.div variants={boxAnim} className="bg-[#161616] border border-[#333333] px-[28px] py-[20px] rounded-[12px]">
           <div className="text-[18px] text-[#ffffff]">User Input</div><div className="text-[14px] text-[#666666]">(expense data)</div>
         </motion.div>

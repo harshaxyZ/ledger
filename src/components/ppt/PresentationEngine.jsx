@@ -109,7 +109,7 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Syncopate',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}
@@ -123,9 +123,9 @@ const PresentationEngine = ({ slides }) => {
           animate="center"
           exit="exit"
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'p-[80px]'}`}
+          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'p-[30px] py-[30px]'}`}
         >
-          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'max-w-[1000px]'}`}>
+          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'w-[90vw] max-w-[1400px]'}`}>
             <CurrentSlideComponent />
           </div>
         </motion.div>
@@ -133,7 +133,7 @@ const PresentationEngine = ({ slides }) => {
 
       {/* Top Right Page Number Indicator */}
       {currentSlide > 0 && (
-        <div className="absolute top-[80px] right-[80px] text-[18px] text-[#666666] z-50 tracking-wider">
+        <div className="absolute top-[30px] py-[30px] right-[80px] text-[18px] text-[#666666] z-50 tracking-wider">
           {String(currentSlide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
         </div>
       )}
