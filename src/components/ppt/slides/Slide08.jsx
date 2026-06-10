@@ -3,15 +3,15 @@ import { motion } from 'framer-motion';
 const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
 export default function Slide08() {
   const steps = [
-    { title: "Requirement Analysis", body: "Offline storage, fast logging, AI integration, and privacy.", side: "left" },
-    { title: "System Design", body: "Modular architecture for UI, data, AI, and notifications.", side: "right" },
-    { title: "Development", body: "Kotlin, Jetpack Compose, Room database, Groq API.", side: "left" },
-    { title: "Testing", body: "Offline functions, data persistence, UI responsiveness.", side: "right" },
+    { title: "Planning & Design", body: "We decided to build a PWA for cross-platform support. We planned the UI to be clean, dark, and extremely simple to use.", side: "left" },
+    { title: "Frontend Construction", body: "We built the interface using React and Tailwind CSS. We made sure it feels like a native mobile app on phones.", side: "right" },
+    { title: "Local Database", body: "We implemented IndexedDB to handle saving, editing, and deleting transactions instantly without internet.", side: "left" },
+    { title: "AI Integration", body: "We connected the Groq API to provide lightning-fast financial coaching based on the user's local data.", side: "right" },
   ];
   return (
     <div className="w-full flex flex-col items-center">
       <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Methodology</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">Development Workflow</motion.h2>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">How We Built It</motion.h2>
       
       <div className="relative w-full max-w-[1100px] flex flex-col items-center mt-[20px]">
         <motion.div 
@@ -28,7 +28,7 @@ export default function Slide08() {
               ></motion.div>
               <motion.div 
                 initial={{ opacity: 0, x: s.side === 'left' ? -40 : 40 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 + (i * 0.3), duration: 0.5 }}
-                className={`w-[45%] bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[32px] rounded-[16px] ${s.side === 'left' ? 'mr-[5%]' : 'ml-[5%]'}`}
+                className={`w-[45%] bg-[#121212] border border-[#333333] p-[32px] rounded-[16px] ${s.side === 'left' ? 'mr-[5%]' : 'ml-[5%]'}`}
               >
                 <h3 className="text-[28px] font-bold text-[#ffffff] mb-[12px]">{s.title}</h3>
                 <p className="text-[22px] text-[#d0d0d0] leading-[1.6]">{s.body}</p>

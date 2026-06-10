@@ -8,13 +8,13 @@ export default function Slide13() {
       <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[40px]">Transaction History</motion.h2>
       <div className="w-full max-w-[1200px] flex justify-between items-center text-left">
         <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="w-[55%] flex justify-center">
-          <img src="/image_2.png" alt="Screenshot" className="w-full max-h-[60vh] object-contain rounded-[20px] border-[2px] border-[rgba(255,255,255,0.1)] shadow-2xl" />
+          <img src="/image_2.webp" alt="Screenshot" className="w-[85%] max-h-[65vh] object-contain rounded-[20px] shadow-[0_0_40px_rgba(255,51,51,0.15)]" />
         </motion.div>
-        <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-[40%] bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[40px] rounded-[16px]">
-          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Complete Log</h3>
-          <p className="text-[24px] text-[#d0d0d0] leading-[1.7] whitespace-pre-line">Every expense is recorded with date, category, and amount.
+        <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-[40%] bg-[#121212] border border-[#333333] p-[40px] rounded-[16px]">
+          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Your Complete Log</h3>
+          <p className="text-[24px] text-[#d0d0d0] leading-[1.7] whitespace-pre-line">This screen acts like your personal bank statement.
 
-Transactions are grouped by day. Users can search by keyword, filter by category, or delete entries. All data persists locally.</p>
+Every single time you buy a coffee or pay rent, it is logged here. The transactions are neatly sorted by day and date. It uses different colors to separate your income from your expenses, making it very easy to scan.</p>
         </motion.div>
       </div>
     </div>

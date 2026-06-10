@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const bgMap = {
   0: null,
-  1: '/bg1.png', 2: '/bg1.png', 3: '/bg1.png', 4: '/bg1.png', 5: '/bg1.png',
-  6: '/bg2.png', 7: '/bg2.png', 8: '/bg2.png', 9: '/bg2.png', 10: '/bg2.png',
-  11: '/bg3.png', 12: '/bg3.png', 13: '/bg3.png', 14: '/bg3.png', 15: '/bg3.png',
-  16: '/bg3.png', 17: '/bg3.png', 18: '/bg3.png',
+  1: '/bg1.webp', 2: '/bg1.webp', 3: '/bg1.webp', 4: '/bg1.webp', 5: '/bg1.webp',
+  6: '/bg2.webp', 7: '/bg2.webp', 8: '/bg2.webp', 9: '/bg2.webp', 10: '/bg2.webp',
+  11: '/bg3.webp', 12: '/bg3.webp', 13: '/bg3.webp', 14: '/bg3.webp', 15: '/bg3.webp',
+  16: '/bg3.webp', 17: '/bg3.webp', 18: '/bg3.webp',
   19: null
 };
 
@@ -94,14 +94,16 @@ const PresentationEngine = ({ slides }) => {
   const CurrentSlideComponent = slides[currentSlide];
   const bgImage = bgMap[currentSlide];
 
+  // We removed backdrop-filter: blur to fix lag.
+  // We use solid dark colors for cards now.
+
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon','Space_Grotesk','Syne',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}
     >
-      {/* Background Image Layer */}
       <AnimatePresence mode="wait">
         {bgImage && (
           <motion.div 
@@ -109,17 +111,15 @@ const PresentationEngine = ({ slides }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
-            className="absolute inset-0 w-full h-full bg-cover bg-center"
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0 w-full h-full bg-cover bg-center will-change-transform"
             style={{ backgroundImage: `url('${bgImage}')` }}
           />
         )}
       </AnimatePresence>
       
-      {/* Gradient Overlay Layer */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.75)] to-[rgba(0,0,0,0.55)] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.85)] to-[rgba(0,0,0,0.65)] pointer-events-none" />
 
-      {/* Slide Content Layer */}
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
           key={currentSlide}
@@ -128,23 +128,21 @@ const PresentationEngine = ({ slides }) => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center z-10 ${currentSlide === 0 ? '' : 'p-[60px]'}`}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center z-10 ${currentSlide === 0 ? 'p-[20px]' : 'p-[60px]'}`}
         >
-          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'max-w-[1200px] w-full'}`}>
+          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? 'w-full h-full' : 'max-w-[1200px] w-full'}`}>
             <CurrentSlideComponent />
           </div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Top Right Page Number Indicator */}
       {currentSlide > 0 && (
         <div className="absolute top-[60px] right-[60px] text-[18px] text-[#b0b0b0] z-50 tracking-wider">
           {String(currentSlide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
         </div>
       )}
 
-      {/* Subtle Navigation Hints */}
       <AnimatePresence>
         {showNavHints && (
           <motion.div 

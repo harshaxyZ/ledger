@@ -6,26 +6,26 @@ export default function Slide02() {
   return (
     <div className="w-full flex flex-col items-center text-center">
       <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px] leading-tight">Introduction</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[40px]">The Need for Financial Privacy</motion.h2>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[40px]">The Need for Privacy</motion.h2>
       
       <motion.div variants={container} initial="hidden" animate="show" className="text-[24px] md:text-[28px] text-[#d0d0d0] leading-[1.7] max-w-[1100px] mb-[60px] w-full text-center">
-        <motion.p variants={anim} className="mb-4">In 2026, every financial app demands your data. Bank details, spending habits, location — all uploaded to corporate servers and sold to advertisers.</motion.p>
-        <motion.p variants={anim} className="mb-4">Ledger was built on one belief: your money is your business.</motion.p>
-        <motion.p variants={anim}>It is a 100% offline Android expense tracker. No cloud. No signup. No data harvesting.</motion.p>
+        <motion.p variants={anim} className="mb-4">Right now, every single financial app on the market demands your personal data. They want to know what you buy, where you shop, and how much money you make.</motion.p>
+        <motion.p variants={anim} className="mb-4">This data is uploaded to their cloud servers, analyzed, and often sold to advertisers. We believe your money is your private business.</motion.p>
+        <motion.p variants={anim}>Ledger was built to solve this. It is a 100% offline, privacy-first web application. There is no cloud. There is no login. Everything stays on your device forever.</motion.p>
       </motion.div>
       
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-3 gap-[24px] w-full max-w-[1200px]">
-        <motion.div variants={anim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[32px] rounded-[16px]">
+        <motion.div variants={anim} className="bg-[#121212] border border-[#333333] p-[32px] rounded-[16px]">
           <div className="text-[48px] text-[#ffffff] font-bold mb-[8px]">100%</div>
-          <div className="text-[20px] text-[#666666]">Offline Operation</div>
+          <div className="text-[20px] text-[#888888]">Offline Operation</div>
         </motion.div>
-        <motion.div variants={anim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[32px] rounded-[16px]">
+        <motion.div variants={anim} className="bg-[#121212] border border-[#333333] p-[32px] rounded-[16px]">
           <div className="text-[48px] text-[#ffffff] font-bold mb-[8px]">Zero</div>
-          <div className="text-[20px] text-[#666666]">Data Harvested</div>
+          <div className="text-[20px] text-[#888888]">Data Harvesting</div>
         </motion.div>
-        <motion.div variants={anim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[32px] rounded-[16px]">
-          <div className="text-[48px] text-[#ffffff] font-bold mb-[8px]">2 Sec</div>
-          <div className="text-[20px] text-[#666666]">Fast Logging</div>
+        <motion.div variants={anim} className="bg-[#121212] border border-[#333333] p-[32px] rounded-[16px]">
+          <div className="text-[48px] text-[#ffffff] font-bold mb-[8px]">PWA</div>
+          <div className="text-[20px] text-[#888888]">Install Anywhere</div>
         </motion.div>
       </motion.div>
     </div>

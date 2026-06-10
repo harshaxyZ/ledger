@@ -16,28 +16,28 @@ export default function Slide07() {
   );
   return (
     <div className="w-full flex flex-col items-center text-center">
-      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Proposed System</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">Ledger — A Better Approach</motion.h2>
+      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Our System</motion.h1>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">The Local-First Approach</motion.h2>
       
       <motion.p initial="hidden" animate="show" variants={anim} className="text-[24px] md:text-[28px] text-[#d0d0d0] leading-[1.7] max-w-[1100px] mb-[60px] mx-auto w-full">
-        Ledger reimagines expense tracking by removing the cloud entirely. All data lives in a local SQLite database on the Android device. Clean dashboard, offline search, smart budget alerts, and an AI coach powered by Groq — all without sending data to a server.
+        Ledger completely removes the cloud. We built it as a Progressive Web App (PWA). All data is saved instantly inside your device's browser using IndexedDB. We only connect to the internet when you ask the Groq AI Coach a question, and we never save those chats.
       </motion.p>
       
       <motion.div variants={container} initial="hidden" animate="show" className="flex items-center justify-center w-full max-w-[1200px] mb-[60px]">
-        <motion.div variants={boxAnim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] px-[40px] py-[30px] rounded-[16px] w-[220px]">
-          <div className="text-[24px] font-bold text-[#ffffff]">Input</div><div className="text-[18px] text-[#888888] mt-2">Expense Data</div>
+        <motion.div variants={boxAnim} className="bg-[#121212] border border-[#333333] px-[40px] py-[30px] rounded-[16px] w-[220px]">
+          <div className="text-[24px] font-bold text-[#ffffff]">Input</div><div className="text-[18px] text-[#888888] mt-2">Log Expense</div>
         </motion.div>
         <Arrow />
-        <motion.div variants={boxAnim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] px-[40px] py-[30px] rounded-[16px] w-[220px]">
-          <div className="text-[24px] font-bold text-[#ffffff]">Process</div><div className="text-[18px] text-[#888888] mt-2">Room DB</div>
+        <motion.div variants={boxAnim} className="bg-[#121212] border border-[#333333] px-[40px] py-[30px] rounded-[16px] w-[220px]">
+          <div className="text-[24px] font-bold text-[#ffffff]">Storage</div><div className="text-[18px] text-[#888888] mt-2">IndexedDB</div>
         </motion.div>
         <Arrow />
-        <motion.div variants={boxAnim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] px-[40px] py-[30px] rounded-[16px] w-[220px]">
-          <div className="text-[24px] font-bold text-[#ffffff]">AI Engine</div><div className="text-[18px] text-[#888888] mt-2">Groq API</div>
+        <motion.div variants={boxAnim} className="bg-[#121212] border border-[#333333] px-[40px] py-[30px] rounded-[16px] w-[220px]">
+          <div className="text-[24px] font-bold text-[#ffffff]">Coach</div><div className="text-[18px] text-[#888888] mt-2">Groq LLM</div>
         </motion.div>
         <Arrow />
-        <motion.div variants={boxAnim} className="bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] px-[40px] py-[30px] rounded-[16px] w-[220px]">
-          <div className="text-[24px] font-bold text-[#ffffff]">Output</div><div className="text-[18px] text-[#888888] mt-2">Insights</div>
+        <motion.div variants={boxAnim} className="bg-[#121212] border border-[#333333] px-[40px] py-[30px] rounded-[16px] w-[220px]">
+          <div className="text-[24px] font-bold text-[#ffffff]">Output</div><div className="text-[18px] text-[#888888] mt-2">Dashboard</div>
         </motion.div>
       </motion.div>
     </div>

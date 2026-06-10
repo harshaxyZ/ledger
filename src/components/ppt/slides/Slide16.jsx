@@ -4,19 +4,19 @@ const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transiti
 export default function Slide16() {
   return (
     <div className="w-full flex flex-col items-center text-center">
-      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px] leading-tight">AI Coach & Budgets</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">Smart Features That Matter</motion.h2>
+      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px] leading-tight">Key Features</motion.h1>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">What Makes It Special</motion.h2>
       <div className="w-full max-w-[1200px] flex justify-between gap-[4%] text-left">
-        <motion.div initial="hidden" animate="show" variants={anim} className="w-[48%] bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[40px] rounded-[16px]">
-          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Ledger Coach Engine</h3>
+        <motion.div initial="hidden" animate="show" variants={anim} className="w-[48%] bg-[#121212] border border-[#333333] p-[40px] rounded-[16px]">
+          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Instant Loading</h3>
           <p className="text-[24px] text-[#d0d0d0] leading-[1.7]">
-            An AI advisor built into the app. It reads spending data locally, generates personalized tips, and answers finance questions. Powered by Groq's ultra-fast LLM inference.
+            Because Ledger is a Progressive Web App (PWA) that uses your browser's local storage, there is zero loading time. The moment you open the app, your data is already there. No waiting for a server to respond.
           </p>
         </motion.div>
-        <motion.div initial="hidden" animate="show" variants={anim} className="w-[48%] bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[40px] rounded-[16px]">
-          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Dynamic Budgeting</h3>
+        <motion.div initial="hidden" animate="show" variants={anim} className="w-[48%] bg-[#121212] border border-[#333333] p-[40px] rounded-[16px]">
+          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Private AI Analysis</h3>
           <p className="text-[24px] text-[#d0d0d0] leading-[1.7]">
-            Users set monthly limits. The app tracks progress locally and warns the user when spending crosses 80% or 100% of the threshold, preventing end-of-month surprises.
+            When you ask the AI Coach a question, it quickly sends only the relevant context to the Groq API. We do not store your chat history anywhere, and Groq's high-speed inference means you get answers in milliseconds.
           </p>
         </motion.div>
       </div>
