@@ -1,41 +1,39 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
+const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
+const rowAnim = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
+const container = { show: { transition: { staggerChildren: 0.1 } } };
 export default function Slide18() {
   const rows = [
-    { feature: "Data Ownership", ledger: "100% Local", mint: "Corporate Servers", ynab: "Corporate Servers", expensify: "Corporate Servers", bg: "bg-[#0a0a0a]" },
-    { feature: "Internet Required", ledger: "No", mint: "Yes", ynab: "Yes", expensify: "Yes", bg: "bg-[#111111]" },
-    { feature: "Subscription Fee", ledger: "Free", mint: "Free (ads)", ynab: "Paid", expensify: "Paid", bg: "bg-[#0a0a0a]" },
-    { feature: "AI Coach", ledger: "Built-in", mint: "No", ynab: "No", expensify: "No", bg: "bg-[#111111]" },
-    { feature: "Privacy", ledger: "Zero Harvesting", mint: "Data For Sale", ynab: "Data Stored", expensify: "Cloud Only", bg: "bg-[#0a0a0a]" },
+    { f: "Data Storage", y: "Cloud", m: "Cloud", l: "100% Local" },
+    { f: "Account Required", y: "Yes", m: "Yes", l: "No" },
+    { f: "Offline Access", y: "Poor", m: "None", l: "Complete" },
+    { f: "AI Assistant", y: "No", m: "No", l: "Yes (Groq)" },
+    { f: "Cost", y: "$84/yr", m: "Ad-supported", l: "Free" }
   ];
-
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Ledger vs The Competition</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Why Ledger Stands Out</motion.h2>
+      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Comparison</motion.h1>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">Ledger vs Industry Standard</motion.h2>
       
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}
-        className="w-full max-w-[1300px] text-left"
-      >
-        <div className="grid grid-cols-5 bg-[#1a1a1a]">
-          <div className="p-[18px] text-[20px] text-[#ffffff]">Feature</div>
-          <div className="p-[18px] text-[20px] text-[#ffffff]">Ledger</div>
-          <div className="p-[18px] text-[20px] text-[#ffffff]">Mint</div>
-          <div className="p-[18px] text-[20px] text-[#ffffff]">YNAB</div>
-          <div className="p-[18px] text-[20px] text-[#ffffff]">Expensify</div>
-        </div>
-        {rows.map((r, i) => (
-          <div key={i} className={`grid grid-cols-5 ${r.bg} border-b border-[#222222]`}>
-            <div className="p-[18px] text-[18px] text-[#b0b0b0]">{r.feature}</div>
-            <div className="p-[18px] text-[18px] text-[#ffffff] font-bold">{r.ledger}</div>
-            <div className="p-[18px] text-[18px] text-[#b0b0b0]">{r.mint}</div>
-            <div className="p-[18px] text-[18px] text-[#b0b0b0]">{r.ynab}</div>
-            <div className="p-[18px] text-[18px] text-[#b0b0b0]">{r.expensify}</div>
-          </div>
-        ))}
-      </motion.div>
+      <div className="w-full max-w-[1200px] text-left rounded-[16px] overflow-hidden bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)]">
+        <motion.div initial="hidden" animate="show" variants={anim} className="grid grid-cols-4 bg-[rgba(255,255,255,0.05)] border-b border-[rgba(255,255,255,0.1)]">
+          <div className="p-[20px] text-[24px] text-[#ffffff] font-bold">Feature</div>
+          <div className="p-[20px] text-[24px] text-[#ffffff] font-bold">YNAB</div>
+          <div className="p-[20px] text-[24px] text-[#ffffff] font-bold">Mint</div>
+          <div className="p-[20px] text-[24px] text-[#ff3333] font-bold">Ledger</div>
+        </motion.div>
+        <motion.div variants={container} initial="hidden" animate="show">
+          {rows.map((r, i) => (
+            <motion.div variants={rowAnim} key={i} className="grid grid-cols-4 border-b border-[rgba(255,255,255,0.05)]">
+              <div className="p-[20px] text-[22px] text-[#ffffff] font-bold">{r.f}</div>
+              <div className="p-[20px] text-[22px] text-[#d0d0d0]">{r.y}</div>
+              <div className="p-[20px] text-[22px] text-[#d0d0d0]">{r.m}</div>
+              <div className="p-[20px] text-[22px] text-[#ff3333] font-bold">{r.l}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 }

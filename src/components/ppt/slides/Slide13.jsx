@@ -1,28 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
+const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
 export default function Slide13() {
   return (
     <div className="w-full flex flex-col items-center">
-      <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-[72px] text-[#ffffff] font-[700] mb-[20px]">Results</motion.h1>
-      <motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-[32px] text-[#ff3333] font-bold font-[500] mb-[20px]">Transaction History</motion.h2>
-      
-      <div className="w-full max-w-[1300px] flex justify-between items-center text-left">
-        <motion.div 
-          initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-[60%] flex justify-center"
-        >
-          <img src="/image_2.png" alt="History" className="w-full max-h-[60vh] rounded-[16px] border border-[#222222] shadow-[inset_0_0_20px_rgba(255,255,255,0.05)] object-contain" />
+      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[15px]">Results</motion.h1>
+      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[40px]">Transaction History</motion.h2>
+      <div className="w-full max-w-[1200px] flex justify-between items-center text-left">
+        <motion.div initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="w-[55%] flex justify-center">
+          <img src="/image_2.png" alt="Screenshot" className="w-full max-h-[60vh] object-contain rounded-[20px] border-[2px] border-[rgba(255,255,255,0.1)] shadow-2xl" />
         </motion.div>
-        
-        <motion.div 
-          initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-          className="w-[35%]"
-        >
-          <h3 className="text-[28px] text-[#ffffff] mb-[20px]">Complete Transaction Log</h3>
-          <p className="text-[20px] text-[#b0b0b0] leading-[1.7]">
-            Every expense is recorded with date, category, and amount. Transactions are grouped by day for easy review. Users can search by keyword, filter by category, or delete entries with a simple swipe. All data persists locally even after app restart or device reboot.
-          </p>
+        <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.3 }} className="w-[40%] bg-[rgba(10,10,10,0.85)] backdrop-blur-[10px] border border-[rgba(255,255,255,0.08)] p-[40px] rounded-[16px]">
+          <h3 className="text-[32px] font-bold text-[#ffffff] mb-[24px]">Complete Log</h3>
+          <p className="text-[24px] text-[#d0d0d0] leading-[1.7] whitespace-pre-line">Every expense is recorded with date, category, and amount.
+
+Transactions are grouped by day. Users can search by keyword, filter by category, or delete entries. All data persists locally.</p>
         </motion.div>
       </div>
     </div>

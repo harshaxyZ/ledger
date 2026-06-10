@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-
 export default function Slide01() {
   return (
     <div className="absolute inset-0 w-full h-full bg-[#000000]">
