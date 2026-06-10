@@ -109,7 +109,7 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Horizon','Inter','Geist','Space_Grotesk',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Syncopate',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}
@@ -123,9 +123,9 @@ const PresentationEngine = ({ slides }) => {
           animate="center"
           exit="exit"
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-[80px]"
+          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'p-[80px]'}`}
         >
-          <div className="w-full h-full max-w-[1000px] flex flex-col items-center justify-center">
+          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? '' : 'max-w-[1000px]'}`}>
             <CurrentSlideComponent />
           </div>
         </motion.div>
