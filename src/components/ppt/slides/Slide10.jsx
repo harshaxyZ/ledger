@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-const container = { show: { transition: { staggerChildren: 0.12 } } };
-const cardAnim = { hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1.0, transition: { duration: 0.4, ease: "easeOut" } } };
-const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
+const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+const anim = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } } };
 export default function Slide10() {
   const techs = [
     { name: "React JS", desc: "A powerful JavaScript library for building fast and interactive user interfaces." },
@@ -13,17 +12,17 @@ export default function Slide10() {
     { name: "Vite & PWA", desc: "A blazing fast build tool. It packages our app so users can install it on their phones." },
   ];
   return (
-    <div className="w-full flex flex-col items-center">
-      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Tech Stack</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[50px]">What We Used</motion.h2>
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-3 gap-[24px] w-full max-w-[1200px]">
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center">
+      <motion.h1 variants={anim} className="text-[84px] md:text-[96px] font-[800] text-[#ffffff] mb-[30px] text-center">Tech Stack</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[50px] text-center">What We Used</motion.h2>
+      <motion.div variants={container} className="grid grid-cols-3 gap-[30px] w-full max-w-[1200px]">
         {techs.map((t, i) => (
-          <motion.div variants={cardAnim} key={i} className="bg-[#121212] border border-[#333333] p-[40px] rounded-[16px]">
-            <h3 className="text-[28px] font-bold text-[#ffffff] mb-[16px]">{t.name}</h3>
-            <p className="text-[20px] text-[#d0d0d0] leading-[1.6]">{t.desc}</p>
+          <motion.div variants={anim} key={i} className="bg-[rgba(255,255,255,0.03)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] p-[28px] rounded-[16px]">
+            <h3 className="text-[24px] font-[700] text-[#ffffff] mb-[12px]">{t.name}</h3>
+            <p className="text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{t.desc}</p>
           </motion.div>
         ))}
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

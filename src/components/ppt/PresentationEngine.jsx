@@ -2,12 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const bgMap = {
-  0: null,
-  1: '/bg1.webp', 2: '/bg1.webp', 3: '/bg1.webp', 4: '/bg1.webp', 5: '/bg1.webp',
-  6: '/bg2.webp', 7: '/bg2.webp', 8: '/bg2.webp', 9: '/bg2.webp', 10: '/bg2.webp',
-  11: '/bg3.webp', 12: '/bg3.webp', 13: '/bg3.webp', 14: '/bg3.webp', 15: '/bg3.webp',
-  16: '/bg3.webp', 17: '/bg3.webp', 18: '/bg3.webp',
-  19: null
+  0: null, // Slide 1
+  1: '/bg1.webp', 2: '/bg1.webp', 3: '/bg1.webp', 4: '/bg1.webp', // Slides 2-5
+  5: '/bg2.webp', 6: '/bg2.webp', 7: '/bg2.webp', 8: '/bg2.webp', 9: '/bg2.webp', 10: '/bg2.webp', // Slides 6-11
+  11: '/bg3.webp', 12: '/bg3.webp', 13: '/bg3.webp', 14: '/bg3.webp', 15: '/bg3.webp', 16: '/bg3.webp', 17: '/bg3.webp', 18: '/bg3.webp', // Slides 12-19
+  19: null // Slide 20
 };
 
 const PresentationEngine = ({ slides }) => {
@@ -94,9 +93,6 @@ const PresentationEngine = ({ slides }) => {
   const CurrentSlideComponent = slides[currentSlide];
   const bgImage = bgMap[currentSlide];
 
-  // We removed backdrop-filter: blur to fix lag.
-  // We use solid dark colors for cards now.
-
   return (
     <div 
       className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Syne',sans-serif]"
@@ -118,7 +114,9 @@ const PresentationEngine = ({ slides }) => {
         )}
       </AnimatePresence>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.85)] to-[rgba(0,0,0,0.65)] pointer-events-none" />
+      {bgImage && (
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.6)] to-[rgba(0,0,0,0.4)] pointer-events-none" />
+      )}
 
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
@@ -128,18 +126,18 @@ const PresentationEngine = ({ slides }) => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center z-10 ${currentSlide === 0 ? 'p-[20px]' : 'p-[60px]'}`}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center z-10 p-[80px]"
         >
-          <div className={`w-full h-full flex flex-col items-center justify-center ${currentSlide === 0 ? 'w-full h-full' : 'max-w-[1200px] w-full'}`}>
+          <div className="w-full h-full max-w-[1400px] flex flex-col items-center justify-center">
             <CurrentSlideComponent />
           </div>
         </motion.div>
       </AnimatePresence>
 
       {currentSlide > 0 && (
-        <div className="absolute top-[60px] right-[60px] text-[18px] text-[#b0b0b0] z-50 tracking-wider">
-          {String(currentSlide + 1).padStart(2, '0')} / {String(totalSlides).padStart(2, '0')}
+        <div className="absolute top-[80px] right-[80px] text-[18px] text-[#666666] font-[400] z-50">
+          {currentSlide + 1} / {totalSlides}
         </div>
       )}
 
@@ -150,7 +148,7 @@ const PresentationEngine = ({ slides }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[16px] text-[#b0b0b0] font-bold tracking-[0.2em] z-50"
+            className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[14px] text-[#888888] font-[400] z-50"
           >
             ↑ ↓
           </motion.div>

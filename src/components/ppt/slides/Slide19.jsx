@@ -1,18 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-const container = { show: { transition: { staggerChildren: 0.12 } } };
-const anim = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
+const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+const anim = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } } };
 export default function Slide19() {
   return (
-    <div className="w-full flex flex-col items-center text-center">
-      <motion.h1 initial="hidden" animate="show" variants={anim} className="text-[96px] md:text-[120px] font-bold text-[#ffffff] mb-[20px]">Conclusion</motion.h1>
-      <motion.h2 initial="hidden" animate="show" variants={anim} className="text-[36px] md:text-[42px] font-bold text-[#ff3333] mb-[60px]">Taking Back Control</motion.h2>
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center text-center">
+      <motion.h1 variants={anim} className="text-[84px] md:text-[96px] font-[800] text-[#ffffff] mb-[30px] text-center">Conclusion</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[50px] text-center">Taking Back Control</motion.h2>
       
-      <motion.div variants={container} initial="hidden" animate="show" className="text-[24px] md:text-[28px] text-[#d0d0d0] leading-[1.7] max-w-[1100px] mb-[60px] w-full text-center">
-        <motion.p variants={anim} className="mb-6">Ledger successfully proves that powerful financial tools do not need to steal your data.</motion.p>
-        <motion.p variants={anim} className="mb-6">By using modern web technologies like React and IndexedDB, we created an app that is faster, safer, and simpler than the biggest corporate competitors on the market.</motion.p>
-        <motion.p variants={anim} className="text-[#ffffff] font-bold mt-8">Your money. Your data. Your device.</motion.p>
+      <motion.div variants={anim} className="text-[20px] md:text-[22px] text-[#b0b0b0] font-[400] leading-[1.6] max-w-[1000px] mb-[40px] w-full text-center space-y-[24px]">
+        <p>Ledger successfully proves that powerful financial tools do not need to steal your data.</p>
+        <p>By using modern web technologies like React and IndexedDB, we created an app that is faster, safer, and simpler than the biggest corporate competitors on the market.</p>
+        <p className="text-[#ffffff] font-[700] mt-[40px] text-[28px]">Your money. Your data. Your device.</p>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

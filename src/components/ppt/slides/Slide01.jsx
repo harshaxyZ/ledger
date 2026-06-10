@@ -6,10 +6,10 @@ export default function Slide01() {
       <motion.img 
         src="/slideone.webp" 
         alt="Title Slide" 
-        initial={{ opacity: 0, scale: 0.95 }} 
-        animate={{ opacity: 1, scale: 1.0 }} 
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="max-w-full max-h-full object-contain"
+        initial={{ opacity: 0, y: 30 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="max-w-full max-h-full object-contain mix-blend-screen"
       />
     </div>
   );
