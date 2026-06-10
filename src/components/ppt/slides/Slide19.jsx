@@ -1,24 +1,36 @@
-// Slide 19: Future Enhancements
-const Slide19 = () => (
-  <div className="w-full h-full flex flex-col justify-center max-w-5xl mx-auto">
-    <p className="text-sm font-bold tracking-widest uppercase text-white/50 mb-16">Future Scope</p>
-    <div className="space-y-12 pl-8 border-l-2 border-white/20">
-      <div className="relative">
-        <div className="absolute w-4 h-4 bg-white rounded-full -left-[41px] top-2"></div>
-        <h3 className="text-3xl font-bold">Custom Categories</h3>
-        <p className="text-white/60 text-lg mt-2">User-defined taxonomy for logging.</p>
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function Slide19() {
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex flex-col justify-center">
+      <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-20 text-center">
+        KEY TAKEAWAYS
+      </motion.h1>
+      
+      <div className="max-w-4xl mx-auto">
+        <motion.p variants={item} className="text-3xl leading-relaxed text-white font-medium mb-10 text-center">
+          Ledger demonstrates that powerful expense tracking does not require sacrificing privacy.
+        </motion.p>
+        
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-10 text-center">
+          By combining offline-first architecture with modern web technologies, the application provides a fast, secure, and intuitive experience.
+        </motion.p>
+        
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 text-center">
+          The project successfully achieves its objectives while creating a strong foundation for future improvements.
+        </motion.p>
       </div>
-      <div className="relative">
-        <div className="absolute w-4 h-4 bg-[#111] border-2 border-white/50 rounded-full -left-[41px] top-2"></div>
-        <h3 className="text-3xl font-bold text-white/50">Recurring Logs</h3>
-        <p className="text-white/40 text-lg mt-2">Automated entries for subscriptions and rent.</p>
-      </div>
-      <div className="relative">
-        <div className="absolute w-4 h-4 bg-[#111] border-2 border-white/50 rounded-full -left-[41px] top-2"></div>
-        <h3 className="text-3xl font-bold text-white/50">Biometric Lock</h3>
-        <p className="text-white/40 text-lg mt-2">FaceID / Fingerprint layer for local security.</p>
-      </div>
-    </div>
-  </div>
-);
-export default Slide19;
+    </motion.div>
+  );
+}

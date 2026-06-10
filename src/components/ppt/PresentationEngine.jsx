@@ -25,6 +25,19 @@ const PresentationEngine = ({ slides }) => {
   // Keyboard Navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Fullscreen support (Ctrl+F or Cmd+F)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn("Could not activate full-screen mode", err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+        return;
+      }
+
       if (['ArrowDown', 'ArrowRight', 'Space', 'PageDown'].includes(e.code) || e.key === ' ') {
         e.preventDefault();
         goToNext();
@@ -129,6 +142,13 @@ const PresentationEngine = ({ slides }) => {
           <CurrentSlideComponent />
         </motion.div>
       </AnimatePresence>
+
+      {/* Top Right Page Number Indicator */}
+      {currentSlide > 0 && currentSlide < totalSlides - 1 && (
+        <div className="absolute top-12 right-12 text-2xl font-bold tracking-widest text-white/40 z-50">
+          {String(currentSlide).padStart(2, '0')} / {String(totalSlides - 2).padStart(2, '0')}
+        </div>
+      )}
 
       {/* Progress Indicator */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center z-50">

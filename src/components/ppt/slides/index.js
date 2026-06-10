@@ -18,4 +18,3 @@ export { default as Slide17 } from './Slide17';
 export { default as Slide18 } from './Slide18';
 export { default as Slide19 } from './Slide19';
 export { default as Slide20 } from './Slide20';
-export { default as Slide21 } from './Slide21';

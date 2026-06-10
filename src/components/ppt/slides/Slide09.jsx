@@ -1,25 +1,51 @@
-// Slide 09: Why Ledger
-const Slide09 = () => (
-  <div className="w-full h-full flex flex-col justify-center max-w-6xl mx-auto">
-    <p className="text-sm font-bold tracking-widest uppercase text-white/50 mb-12">Why Ledger</p>
-    <div className="grid grid-cols-2 gap-x-16 gap-y-12">
-      <div>
-        <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 font-['Horizon','Outfit',sans-serif]">SPEED</h3>
-        <p className="text-xl text-white/60">Because there are no centralized databases, opening the app and logging an expense is instantaneous.</p>
+import React from 'react';
+import { motion } from 'framer-motion';
+import PhoneMockup from '../PhoneMockup';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function Slide09() {
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
+      <div className="w-1/2 pr-16 flex flex-col justify-center">
+        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
+          TRACK EVERYTHING
+        </motion.h1>
+        
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/80 mb-8">
+          The dashboard provides a quick overview of income, expenses, balance, and budget status.
+        </motion.p>
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/60 mb-12">
+          Users immediately understand their financial position without navigating through multiple screens.
+        </motion.p>
+        
+        <motion.h3 variants={item} className="text-white/40 tracking-widest uppercase mb-6 text-sm font-bold">Key Features</motion.h3>
+        <motion.div variants={item} className="grid grid-cols-2 gap-6">
+          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
+            <p className="text-xl font-medium">Income Tracking</p>
+          </div>
+          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
+            <p className="text-xl font-medium">Expense Tracking</p>
+          </div>
+          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
+            <p className="text-xl font-medium">Net Balance Monitoring</p>
+          </div>
+          <div className="p-6 bg-[#111] rounded-2xl border border-white/5">
+            <p className="text-xl font-medium">Budget Alerts</p>
+          </div>
+        </motion.div>
       </div>
-      <div>
-        <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 font-['Horizon','Outfit',sans-serif]">INTELLIGENCE</h3>
-        <p className="text-xl text-white/60">Embedded AI Advisor that analyzes your local spending patterns without exposing your raw data to marketers.</p>
+      <div className="w-1/2 flex justify-center">
+        <PhoneMockup src="/ppt/screenshot_dashboard.png" alt="Dashboard" />
       </div>
-      <div>
-        <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 font-['Horizon','Outfit',sans-serif]">DESIGN</h3>
-        <p className="text-xl text-white/60">A premium dark-mode aesthetic that feels like a native operating system tool.</p>
-      </div>
-      <div>
-        <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 font-['Horizon','Outfit',sans-serif]">OWNERSHIP</h3>
-        <p className="text-xl text-white/60">Your financial footprint remains entirely under your control.</p>
-      </div>
-    </div>
-  </div>
-);
-export default Slide09;
+    </motion.div>
+  );
+}

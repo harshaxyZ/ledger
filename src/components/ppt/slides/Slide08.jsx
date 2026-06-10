@@ -1,22 +1,53 @@
-// Slide 08: Existing Systems
-const Slide08 = () => (
-  <div className="w-full h-full flex flex-col justify-center max-w-6xl mx-auto">
-    <p className="text-sm font-bold tracking-widest uppercase text-white/50 mb-16">Existing Systems vs Ledger</p>
-    <div className="flex gap-16 items-center">
-      <div className="flex-1 space-y-12 opacity-50">
-        <h3 className="text-3xl font-bold mb-8">Existing Apps</h3>
-        <div><p className="text-xl font-bold">Cloud Dependent</p><p className="text-sm">Requires connection</p></div>
-        <div><p className="text-xl font-bold">Ad-Supported</p><p className="text-sm">Cluttered interface</p></div>
-        <div><p className="text-xl font-bold">Account Based</p><p className="text-sm">Requires PII to use</p></div>
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function Slide08() {
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
+      <div className="w-1/2 pr-16 flex flex-col justify-center">
+        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12">
+          THE LEDGER APPROACH
+        </motion.h1>
+        
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white mb-8">
+          Ledger removes unnecessary infrastructure.
+        </motion.p>
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/70 mb-8">
+          The application operates directly on the user's device. Transactions are stored locally, and insights are generated instantly.
+        </motion.p>
+        <motion.p variants={item} className="text-3xl leading-relaxed text-white font-medium">
+          The result is a faster and more private experience.
+        </motion.p>
       </div>
-      <div className="w-px h-[400px] bg-white/20"></div>
-      <div className="flex-1 space-y-12">
-        <h3 className="text-4xl font-black uppercase tracking-tight mb-8 font-['Horizon','Outfit',sans-serif]">LEDGER</h3>
-        <div><p className="text-2xl font-bold">100% Local</p><p className="text-lg text-white/60">Instant access</p></div>
-        <div><p className="text-2xl font-bold">Ad-Free</p><p className="text-lg text-white/60">Pure functionality</p></div>
-        <div><p className="text-2xl font-bold">Anonymous</p><p className="text-lg text-white/60">No emails, no accounts</p></div>
+      
+      <div className="w-1/2 flex justify-center">
+        <motion.div variants={item} className="flex flex-col items-center gap-6">
+          <div className="w-56 h-32 bg-white text-black rounded-2xl flex items-center justify-center text-2xl font-bold shadow-[0_0_40px_rgba(255,255,255,0.2)]">User</div>
+          <div className="w-[2px] h-12 bg-white/40"></div>
+          <div className="w-56 h-32 bg-[#111] rounded-2xl border-2 border-white/40 flex items-center justify-center text-2xl font-bold">Ledger App</div>
+          <div className="w-[2px] h-12 bg-white/40"></div>
+          <div className="flex gap-8">
+            <div className="w-40 h-32 bg-[#111] rounded-2xl border border-white/20 flex flex-col items-center justify-center text-lg font-medium text-white/70">
+              <span>Local</span>
+              <span>Storage</span>
+            </div>
+            <div className="w-40 h-32 bg-[#111] rounded-2xl border border-white/20 flex flex-col items-center justify-center text-lg font-medium text-white/70">
+              <span>Instant</span>
+              <span>Insights</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </div>
-  </div>
-);
-export default Slide08;
+    </motion.div>
+  );
+}

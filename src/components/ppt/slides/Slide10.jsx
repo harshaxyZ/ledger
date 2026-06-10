@@ -1,34 +1,46 @@
-// Slide 10: Architecture
 import React from 'react';
 import { motion } from 'framer-motion';
-const Slide10 = () => (
-  <div className="w-full h-full flex flex-col justify-center items-center max-w-5xl mx-auto">
-    <p className="text-sm font-bold tracking-widest uppercase text-white/50 mb-16 w-full text-left">Architecture</p>
-    
-    <div className="flex flex-col md:flex-row items-center gap-8 w-full justify-center">
-      <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="p-8 border border-white/20 rounded-2xl w-64 text-center bg-[#111]">
-        <p className="font-bold text-2xl">React UI</p>
-        <p className="text-sm text-white/50 mt-2">Components</p>
-      </motion.div>
-      
-      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.4 }} className="text-white/50 rotate-90 md:rotate-0">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </motion.div>
-      
-      <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }} className="p-8 border-2 border-white rounded-2xl w-64 text-center bg-white text-black">
-        <p className="font-bold text-2xl">Custom Hooks</p>
-        <p className="text-sm text-black/60 mt-2">State Management</p>
-      </motion.div>
-      
-      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.8 }} className="text-white/50 rotate-90 md:rotate-0">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </motion.div>
-      
-      <motion.div initial={{ x: 50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 1.0 }} className="p-8 border border-white/20 rounded-2xl w-64 text-center bg-[#111]">
-        <p className="font-bold text-2xl">LocalStorage</p>
-        <p className="text-sm text-white/50 mt-2">Browser DB</p>
-      </motion.div>
-    </div>
-  </div>
-);
-export default Slide10;
+import PhoneMockup from '../PhoneMockup';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function Slide10() {
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex items-center">
+      <div className="w-1/2 pr-16 flex flex-col justify-center">
+        <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-12 leading-tight">
+          EVERY RUPEE ACCOUNTED FOR
+        </motion.h1>
+        
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/80 mb-8">
+          Every transaction is organized chronologically.
+        </motion.p>
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/60 mb-8">
+          Powerful filtering helps users locate records instantly.
+        </motion.p>
+        <motion.p variants={item} className="text-2xl leading-relaxed text-white/60 mb-12">
+          The history system provides transparency and accountability for daily spending.
+        </motion.p>
+        
+        <motion.h3 variants={item} className="text-white/40 tracking-widest uppercase mb-6 text-sm font-bold">Highlighted Features</motion.h3>
+        <motion.div variants={item} className="flex flex-wrap gap-4">
+          <span className="px-6 py-3 bg-[#111] rounded-full border border-white/10 text-lg">Search</span>
+          <span className="px-6 py-3 bg-[#111] rounded-full border border-white/10 text-lg">Filtering</span>
+          <span className="px-6 py-3 bg-[#111] rounded-full border border-white/10 text-lg">Category Tracking</span>
+          <span className="px-6 py-3 bg-[#111] rounded-full border border-white/10 text-lg">Date Grouping</span>
+        </motion.div>
+      </div>
+      <div className="w-1/2 flex justify-center">
+        <PhoneMockup src="/ppt/screenshot_dashboard_data.png" alt="History" />
+      </div>
+    </motion.div>
+  );
+}

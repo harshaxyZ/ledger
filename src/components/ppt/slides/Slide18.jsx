@@ -1,21 +1,39 @@
-// Slide 18: Results
-const Slide18 = () => (
-  <div className="w-full h-full flex flex-col justify-center items-center max-w-5xl mx-auto text-center">
-    <p className="text-sm font-bold tracking-widest uppercase text-white/50 mb-16">Results</p>
-    <div className="grid grid-cols-1 md:grid-cols-3 w-full border border-white rounded-3xl overflow-hidden">
-      <div className="p-16 border-b md:border-b-0 md:border-r border-white flex flex-col justify-center items-center bg-[#111]">
-        <h3 className="text-7xl font-black mb-4">0<span className="text-4xl">ms</span></h3>
-        <p className="text-white/60 font-bold uppercase tracking-widest">Latency</p>
-      </div>
-      <div className="p-16 border-b md:border-b-0 md:border-r border-white flex flex-col justify-center items-center bg-[#111]">
-        <h3 className="text-7xl font-black mb-4">100<span className="text-4xl">%</span></h3>
-        <p className="text-white/60 font-bold uppercase tracking-widest">Private</p>
-      </div>
-      <div className="p-16 flex flex-col justify-center items-center bg-white text-black">
-        <h3 className="text-7xl font-black mb-4">PWA</h3>
-        <p className="text-black/60 font-bold uppercase tracking-widest">Native Feel</p>
-      </div>
-    </div>
-  </div>
-);
-export default Slide18;
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.15 } }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+export default function Slide18() {
+  const future = [
+    "Custom Categories", 
+    "Recurring Transactions", 
+    "Advanced Analytics", 
+    "Multi Device Sync", 
+    "Receipt Scanning", 
+    "Enhanced AI Features"
+  ];
+
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="w-full h-full flex flex-col justify-center">
+      <motion.h1 variants={item} className="text-6xl font-['Horizon','Outfit',sans-serif] uppercase tracking-tighter mb-20 text-center">
+        WHAT COMES NEXT?
+      </motion.h1>
+      
+      <motion.div variants={item} className="grid grid-cols-3 gap-8 max-w-6xl mx-auto w-full">
+        {future.map((f, idx) => (
+          <div key={idx} className="bg-[#111] p-10 rounded-3xl border border-white/5 flex items-center justify-center min-h-[160px] text-center">
+            <h3 className="text-2xl font-bold">{f}</h3>
+          </div>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+}

@@ -23,7 +23,6 @@ const slidesList = [
   Slides.Slide18,
   Slides.Slide19,
   Slides.Slide20,
-  Slides.Slide21,
 ];
 
 const Presentation = () => {
