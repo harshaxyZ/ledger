@@ -2,18 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const bgMap = {
-  0: null, // Slide 1
-  1: '/bg1.webp', 2: '/bg1.webp', 3: '/bg1.webp', 4: '/bg1.webp', // Slides 2-5
-  5: '/bg2.webp', 6: '/bg2.webp', 7: '/bg2.webp', 8: '/bg2.webp', 9: '/bg2.webp', 10: '/bg2.webp', // Slides 6-11
-  11: '/bg3.webp', 12: '/bg3.webp', 13: '/bg3.webp', 14: '/bg3.webp', 15: '/bg3.webp', 16: '/bg3.webp', 17: '/bg3.webp', 18: '/bg3.webp', // Slides 12-19
-  19: null // Slide 20
+  0: null,
+  1: '/bg1.webp', 2: '/bg1.webp', 3: '/bg1.webp', 4: '/bg1.webp',
+  5: '/bg2.webp', 6: '/bg2.webp', 7: '/bg2.webp', 8: '/bg2.webp', 9: '/bg2.webp', 10: '/bg2.webp',
+  11: '/bg3.webp', 12: '/bg3.webp', 13: '/bg3.webp', 14: '/bg3.webp', 15: '/bg3.webp', 16: '/bg3.webp', 17: '/bg3.webp', 18: '/bg3.webp',
+  19: null
 };
 
 const PresentationEngine = ({ slides }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
   const [touchStart, setTouchStart] = useState(null);
-  const [showNavHints, setShowNavHints] = useState(true);
   
   const totalSlides = slides.length;
 
@@ -55,7 +54,7 @@ const PresentationEngine = ({ slides }) => {
     const handleWheel = (e) => {
       e.preventDefault();
       if (wheelTimeout) return;
-      wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 800);
+      wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 500); // 500ms debounce
       if (e.deltaY > 0) goToNext();
       else if (e.deltaY < 0) goToPrev();
     };
@@ -78,16 +77,10 @@ const PresentationEngine = ({ slides }) => {
     setTouchStart(null);
   };
 
-  useEffect(() => {
-    setShowNavHints(true);
-    const timer = setTimeout(() => setShowNavHints(false), 3000);
-    return () => clearTimeout(timer);
-  }, [currentSlide]);
-
   const variants = {
-    enter: (direction) => ({ y: direction > 0 ? '100vh' : '-100vh' }),
-    center: { y: 0 },
-    exit: (direction) => ({ y: direction < 0 ? '100vh' : '-100vh' })
+    enter: (direction) => ({ y: direction > 0 ? '100vh' : '-100vh', opacity: 0 }),
+    center: { y: 0, opacity: 1, zIndex: 1 },
+    exit: (direction) => ({ y: direction < 0 ? '100vh' : '-100vh', opacity: 0, zIndex: 0 })
   };
 
   const CurrentSlideComponent = slides[currentSlide];
@@ -95,10 +88,10 @@ const PresentationEngine = ({ slides }) => {
 
   return (
     <div 
-      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Syne',sans-serif]"
+      className="fixed inset-0 w-full h-full bg-[#000000] text-[#ffffff] overflow-hidden flex flex-col font-['Space_Grotesk',sans-serif]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased' }}
+      style={{ userSelect: 'none', WebkitFontSmoothing: 'antialiased', contain: 'layout style paint' }}
     >
       <AnimatePresence mode="wait">
         {bgImage && (
@@ -107,15 +100,15 @@ const PresentationEngine = ({ slides }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0 w-full h-full bg-cover bg-center will-change-transform"
-            style={{ backgroundImage: `url('${bgImage}')` }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 w-full h-full bg-cover bg-center"
+            style={{ backgroundImage: `url('${bgImage}')`, transform: 'translateZ(0)' }}
           />
         )}
       </AnimatePresence>
       
       {bgImage && (
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.6)] to-[rgba(0,0,0,0.4)] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.55)] to-[rgba(0,0,0,0.35)] pointer-events-none transform-gpu" />
       )}
 
       <AnimatePresence initial={false} custom={direction} mode="wait">
@@ -126,34 +119,25 @@ const PresentationEngine = ({ slides }) => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center z-10 p-[80px]"
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center p-[60px]"
+          style={{ transform: 'translateZ(0)' }}
         >
-          <div className="w-full h-full max-w-[1400px] flex flex-col items-center justify-center">
+          <div className="w-full h-full max-w-[1100px] flex flex-col items-center justify-center">
             <CurrentSlideComponent />
           </div>
         </motion.div>
       </AnimatePresence>
 
       {currentSlide > 0 && (
-        <div className="absolute top-[80px] right-[80px] text-[18px] text-[#666666] font-[400] z-50">
+        <div className="absolute top-[60px] right-[60px] text-[16px] text-[#666666] font-[400] z-50">
           {currentSlide + 1} / {totalSlides}
         </div>
       )}
 
-      <AnimatePresence>
-        {showNavHints && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[14px] text-[#888888] font-[400] z-50"
-          >
-            ↑ ↓
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="absolute bottom-[20px] left-0 right-0 flex justify-center text-[14px] text-[#666666] font-[400] z-50 pointer-events-none">
+        ↑ ↓
+      </div>
     </div>
   );
 };

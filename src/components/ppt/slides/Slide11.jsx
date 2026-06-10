@@ -11,13 +11,13 @@ export default function Slide11() {
   ];
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center">
-      <motion.h1 variants={anim} className="text-[84px] md:text-[96px] font-[800] text-[#ffffff] mb-[30px] text-center">Implementation</motion.h1>
-      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[50px] text-center">The Four Main Parts</motion.h2>
-      <motion.div variants={container} className="w-full max-w-[1200px] flex flex-col gap-[20px]">
+      <motion.h1 variants={anim} className="text-[80px] md:text-[96px] font-[700] text-[#ffffff] mb-[20px] text-center">Implementation</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[40px] text-center">The Four Main Parts</motion.h2>
+      <motion.div variants={container} className="w-full max-w-[1100px] flex flex-col gap-[20px]">
         {modules.map((m, i) => (
-          <motion.div variants={anim} key={i} className="bg-[rgba(255,255,255,0.03)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] px-[32px] py-[24px] rounded-[16px]">
+          <motion.div variants={anim} key={i} className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] px-[24px] py-[20px] rounded-[16px]">
             <h3 className="text-[24px] font-[700] text-[#ffffff] mb-[8px]">{m.name}</h3>
-            <p className="text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{m.desc}</p>
+            <p className="text-[18px] md:text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{m.desc}</p>
           </motion.div>
         ))}
       </motion.div>

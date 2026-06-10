@@ -13,13 +13,13 @@ export default function Slide10() {
   ];
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center">
-      <motion.h1 variants={anim} className="text-[84px] md:text-[96px] font-[800] text-[#ffffff] mb-[30px] text-center">Tech Stack</motion.h1>
-      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[50px] text-center">What We Used</motion.h2>
-      <motion.div variants={container} className="grid grid-cols-3 gap-[30px] w-full max-w-[1200px]">
+      <motion.h1 variants={anim} className="text-[80px] md:text-[96px] font-[700] text-[#ffffff] mb-[20px] text-center">Tech Stack</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[40px] text-center">What We Used</motion.h2>
+      <motion.div variants={container} className="grid grid-cols-3 gap-[30px] w-full max-w-[1100px]">
         {techs.map((t, i) => (
-          <motion.div variants={anim} key={i} className="bg-[rgba(255,255,255,0.03)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] p-[28px] rounded-[16px]">
+          <motion.div variants={anim} key={i} className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-[24px] rounded-[16px]">
             <h3 className="text-[24px] font-[700] text-[#ffffff] mb-[12px]">{t.name}</h3>
-            <p className="text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{t.desc}</p>
+            <p className="text-[18px] text-[#b0b0b0] font-[400] leading-[1.6]">{t.desc}</p>
           </motion.div>
         ))}
       </motion.div>

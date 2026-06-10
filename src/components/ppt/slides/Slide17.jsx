@@ -10,13 +10,13 @@ export default function Slide17() {
   ];
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="w-full flex flex-col items-center">
-      <motion.h1 variants={anim} className="text-[84px] md:text-[96px] font-[800] text-[#ffffff] mb-[30px] text-center">Future Plans</motion.h1>
-      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[50px] text-center">What We Will Add Next</motion.h2>
-      <motion.div variants={container} className="w-full max-w-[1200px] flex gap-[30px]">
+      <motion.h1 variants={anim} className="text-[80px] md:text-[96px] font-[700] text-[#ffffff] mb-[20px] text-center">Future Plans</motion.h1>
+      <motion.h2 variants={anim} className="text-[32px] md:text-[36px] font-[700] text-[#ff3333] mb-[40px] text-center">What We Will Add Next</motion.h2>
+      <motion.div variants={container} className="w-full max-w-[1100px] flex gap-[30px]">
         {future.map((f, i) => (
-          <motion.div variants={anim} key={i} className="flex-1 bg-[rgba(255,255,255,0.03)] backdrop-blur-[12px] border border-[rgba(255,255,255,0.06)] p-[32px] rounded-[16px]">
-            <h3 className="text-[24px] md:text-[28px] font-[700] text-[#ffffff] mb-[16px]">{f.title}</h3>
-            <p className="text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{f.desc}</p>
+          <motion.div variants={anim} key={i} className="flex-1 bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-[24px] rounded-[16px]">
+            <h3 className="text-[24px] font-[700] text-[#ffffff] mb-[16px]">{f.title}</h3>
+            <p className="text-[18px] md:text-[20px] text-[#b0b0b0] font-[400] leading-[1.6]">{f.desc}</p>
           </motion.div>
         ))}
       </motion.div>
