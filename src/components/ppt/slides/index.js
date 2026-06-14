@@ -1,4 +1,3 @@
-export { default as Slide01 } from './Slide01';
 export { default as Slide02 } from './Slide02';
 export { default as Slide03 } from './Slide03';
 export { default as Slide04 } from './Slide04';

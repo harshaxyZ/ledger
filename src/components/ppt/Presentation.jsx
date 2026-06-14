@@ -3,7 +3,6 @@ import PresentationEngine from './PresentationEngine';
 import * as Slides from './slides';
 
 const slidesList = [
-  Slides.Slide01,
   Slides.Slide02,
   Slides.Slide03,
   Slides.Slide04,
